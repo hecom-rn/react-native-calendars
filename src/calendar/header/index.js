@@ -11,6 +11,7 @@ class CalendarHeader extends Component {
     theme: PropTypes.object,
     hideArrows: PropTypes.bool,
     month: PropTypes.instanceOf(XDate),
+    currentDay: PropTypes.instanceOf(XDate),
     addMonth: PropTypes.func,
     showIndicator: PropTypes.bool,
     firstDay: PropTypes.number,
@@ -24,6 +25,12 @@ class CalendarHeader extends Component {
     this.style = styleConstructor(props.theme);
     this.addMonth = this.addMonth.bind(this);
     this.substractMonth = this.substractMonth.bind(this);
+    this.today = XDate();
+  }
+
+  isSameDay(selected) {
+    return this.today.getFullYear() === selected.getFullYear() && this.today.getMonth() === selected.getMonth()
+        && this.today.getDate() === selected.getDate();
   }
 
   addMonth() {
@@ -45,6 +52,9 @@ class CalendarHeader extends Component {
       return true;
     }
     if (nextProps.hideDayNames !== this.props.hideDayNames) {
+      return true;
+    }
+    if (nextProps.currentDay !== this.props.currentDay) {
       return true;
     }
     return false;
@@ -83,16 +93,25 @@ class CalendarHeader extends Component {
     if (this.props.showIndicator) {
       indicator = <ActivityIndicator />;
     }
+    let today;
+    if (!this.isSameDay(this.props.currentDay)) {
+      today = <TouchableOpacity onPress={()=>this.props.pressDay(this.today)}>
+          <Text style={this.style.today}>今日</Text>
+      </TouchableOpacity>;
+    }
+    let tempSwitch = <TouchableOpacity onPress={this.props.tirgger}><Text>切换</Text></TouchableOpacity>
     return (
       <View>
         <View style={this.style.header}>
           {leftArrow}
+          {tempSwitch}
           <View style={{ flexDirection: 'row' }}>
             <Text allowFontScaling={false} style={this.style.monthText}>
               {this.props.month.toString(this.props.monthFormat ? this.props.monthFormat : 'MMMM yyyy')}
             </Text>
             {indicator}
           </View>
+          {today}
           {rightArrow}
         </View>
         {

@@ -13,6 +13,11 @@ export default function(theme={}) {
       paddingRight: 10,
       alignItems: 'center'
     },
+    today:{
+      fontSize: appStyle.textTodayFontSize,
+      fontFamily: appStyle.textTodayFamily,
+      color: appStyle.todayTextColor
+    },
     monthText: {
       fontSize: appStyle.textMonthFontSize,
       fontFamily: appStyle.textMonthFontFamily,

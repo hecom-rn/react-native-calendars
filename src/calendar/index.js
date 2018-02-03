@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {
   View,
-  ViewPropTypes
+  ViewPropTypes,
+  Animated,
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -80,7 +81,8 @@ class Calendar extends Component {
       currentMonth = XDate();
     }
     this.state = {
-      currentMonth
+      currentMonth,
+      currentDay:currentMonth,
     };
 
     this.updateMonth = this.updateMonth.bind(this);
@@ -92,8 +94,10 @@ class Calendar extends Component {
   componentWillReceiveProps(nextProps) {
     const current= parseDate(nextProps.current);
     if (current && current.toString('yyyy MM') !== this.state.currentMonth.toString('yyyy MM')) {
+      const currentMonth = current.clone();
       this.setState({
-        currentMonth: current.clone()
+        currentMonth,
+        currentDay: currentMonth,
       });
     }
   }
@@ -102,8 +106,10 @@ class Calendar extends Component {
     if (day.toString('yyyy MM') === this.state.currentMonth.toString('yyyy MM')) {
       return;
     }
+    const currentMonth = day.clone();
     this.setState({
-      currentMonth: day.clone()
+      currentMonth,
+      currentDay: currentMonth,
     }, () => {
       if (!doNotTriggerListeners) {
         const currMont = this.state.currentMonth.clone();
@@ -121,6 +127,7 @@ class Calendar extends Component {
     const day = parseDate(date);
     const minDate = parseDate(this.props.minDate);
     const maxDate = parseDate(this.props.maxDate);
+    this.setState({currentDay:day});
     if (!(minDate && !dateutils.isGTE(day, minDate)) && !(maxDate && !dateutils.isLTE(day, maxDate))) {
       const shouldUpdateMonth = this.props.disableMonthChange === undefined || !this.props.disableMonthChange;
       if (shouldUpdateMonth) {
@@ -219,6 +226,10 @@ class Calendar extends Component {
     return (<View style={this.style.week} key={id}>{week}</View>);
   }
 
+  tirgger = () =>{
+
+  };
+
   render() {
     const days = dateutils.page(this.state.currentMonth, this.props.firstDay);
     const weeks = [];
@@ -238,17 +249,22 @@ class Calendar extends Component {
       <View style={[this.style.container, this.props.style]}>
         <CalendarHeader
           theme={this.props.theme}
+          tirgger={this.tirgger}
           hideArrows={this.props.hideArrows}
           month={this.state.currentMonth}
+          currentDay={this.state.currentDay}
           addMonth={this.addMonth}
           showIndicator={indicator}
           firstDay={this.props.firstDay}
+          pressDay={this.pressDay}
           renderArrow={this.props.renderArrow}
           monthFormat={this.props.monthFormat}
           hideDayNames={this.props.hideDayNames}
           weekNumbers={this.props.showWeekNumbers}
         />
-        {weeks}
+        <Animated.View>
+          {weeks}
+        </Animated.View>
       </View>);
   }
 }
