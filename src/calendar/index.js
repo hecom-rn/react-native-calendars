@@ -3,6 +3,7 @@ import {
   View,
   ViewPropTypes,
   Animated,
+  LayoutAnimation,
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -18,7 +19,7 @@ import shouldComponentUpdate from './updater';
 
 //Fallback when RN version is < 0.44
 const viewPropTypes = ViewPropTypes || View.propTypes;
-
+const MODE = {WEEK:1,MONTH:0};
 const EmptyArray = [];
 
 class Calendar extends Component {
@@ -74,15 +75,15 @@ class Calendar extends Component {
   constructor(props) {
     super(props);
     this.style = styleConstructor(this.props.theme);
-    let currentMonth;
+    let currentDay;
     if (props.current) {
-      currentMonth = parseDate(props.current);
+      currentDay = parseDate(props.current);
     } else {
-      currentMonth = XDate();
+      currentDay = XDate();
     }
     this.state = {
-      currentMonth,
-      currentDay:currentMonth,
+      currentDay,
+      mode: MODE.MONTH,
     };
 
     this.updateMonth = this.updateMonth.bind(this);
@@ -93,28 +94,43 @@ class Calendar extends Component {
 
   componentWillReceiveProps(nextProps) {
     const current= parseDate(nextProps.current);
-    if (current && current.toString('yyyy MM') !== this.state.currentMonth.toString('yyyy MM')) {
-      const currentMonth = current.clone();
+    if (current && current.toString('yyyy MM') !== this.state.currentDay.toString('yyyy MM')) {
+      const currentDay = current.clone();
       this.setState({
-        currentMonth,
-        currentDay: currentMonth,
+        currentDay,
       });
     }
   }
 
   updateMonth(day, doNotTriggerListeners) {
-    if (day.toString('yyyy MM') === this.state.currentMonth.toString('yyyy MM')) {
+    if (day.toString('yyyy MM') === this.state.currentDay.toString('yyyy MM')) {
       return;
     }
-    const currentMonth = day.clone();
+    const currentDay = day.clone();
     this.setState({
-      currentMonth,
-      currentDay: currentMonth,
+      currentDay,
     }, () => {
       if (!doNotTriggerListeners) {
-        const currMont = this.state.currentMonth.clone();
+        const currMont = this.state.currentDay.clone();
         if (this.props.onMonthChange) {
           this.props.onMonthChange(xdateToData(currMont));
+        }
+        if (this.props.onVisibleMonthsChange) {
+          this.props.onVisibleMonthsChange([xdateToData(currMont)]);
+        }
+      }
+    });
+  }
+
+  updateWeek(day, doNotTriggerListeners) {
+    const currentDay = day.clone();
+    this.setState({
+      currentDay,
+    }, () => {
+      if (!doNotTriggerListeners) {
+        const currMont = this.state.currentDay.clone();
+        if (this.props.onMonthChange) {
+          this.props.onMonthChange(xdateToData(currMont), this.days);
         }
         if (this.props.onVisibleMonthsChange) {
           this.props.onVisibleMonthsChange([xdateToData(currMont)]);
@@ -140,7 +156,11 @@ class Calendar extends Component {
   }
 
   addMonth(count) {
-    this.updateMonth(this.state.currentMonth.clone().addMonths(count, true));
+    if (this.state.mode === MODE.MONTH){
+      this.updateMonth(this.state.currentDay.clone().addMonths(count, true));
+    } else {
+      this.updateWeek(this.state.currentDay.clone().addWeeks(count, true))
+    }
   }
 
   renderDay(day, id) {
@@ -151,13 +171,13 @@ class Calendar extends Component {
       state = 'disabled';
     } else if ((minDate && !dateutils.isGTE(day, minDate)) || (maxDate && !dateutils.isLTE(day, maxDate))) {
       state = 'disabled';
-    } else if (!dateutils.sameMonth(day, this.state.currentMonth)) {
+    } else if (this.state.mode === MODE.MONTH && !dateutils.sameMonth(day, this.state.currentDay)) {
       state = 'disabled';
     } else if (dateutils.sameDate(day, XDate())) {
       state = 'today';
     }
     let dayComp;
-    if (!dateutils.sameMonth(day, this.state.currentMonth) && this.props.hideExtraDays) {
+    if (this.state.mode === MODE.MONTH && !dateutils.sameMonth(day, this.state.currentDay) && this.props.hideExtraDays) {
       if (this.props.markingType === 'period') {
         dayComp = (<View key={id} style={{flex: 1}}/>);
       } else {
@@ -216,6 +236,9 @@ class Calendar extends Component {
   renderWeek(days, id) {
     const week = [];
     days.forEach((day, id2) => {
+      if (day.getDate() === this.state.currentDay.getDate()){
+        this.currentWeek = id;
+      }
       week.push(this.renderDay(day, id2));
     }, this);
 
@@ -223,15 +246,30 @@ class Calendar extends Component {
       week.unshift(this.renderWeekNumber(days[days.length - 1].getWeek()));
     }
 
-    return (<View style={this.style.week} key={id}>{week}</View>);
+    return (
+      <Animated.View
+        style={[this.style.week]}
+        key={id}
+      >
+        {week}
+      </Animated.View>
+    );
   }
 
   tirgger = () =>{
-
+    if (this.state.mode === MODE.MONTH){
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
+      this.setState({mode:MODE.WEEK});
+    } else {
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
+      this.setState({mode:MODE.MONTH});
+    }
   };
 
   render() {
-    const days = dateutils.page(this.state.currentMonth, this.props.firstDay);
+    let getDays = this.state.mode === MODE.MONTH ? dateutils.page : dateutils.week;
+    const days = getDays(this.state.currentDay, this.props.firstDay);
+    this.days = days;
     const weeks = [];
     while (days.length) {
       weeks.push(this.renderWeek(days.splice(0, 7), weeks.length));
@@ -248,10 +286,11 @@ class Calendar extends Component {
     return (
       <View style={[this.style.container, this.props.style]}>
         <CalendarHeader
+          mode={this.state.mode}
           theme={this.props.theme}
-          tirgger={this.tirgger}
+          tirgger={this.tirgger.bind(this)}
           hideArrows={this.props.hideArrows}
-          month={this.state.currentMonth}
+          month={this.state.currentDay}
           currentDay={this.state.currentDay}
           addMonth={this.addMonth}
           showIndicator={indicator}
@@ -262,9 +301,7 @@ class Calendar extends Component {
           hideDayNames={this.props.hideDayNames}
           weekNumbers={this.props.showWeekNumbers}
         />
-        <Animated.View>
-          {weeks}
-        </Animated.View>
+        {weeks}
       </View>);
   }
 }

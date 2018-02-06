@@ -20,10 +20,19 @@ export default class MenuScreen extends Component {
         <TouchableOpacity style={styles.menu} onPress={this.onAgendaPress.bind(this)}>
           <Text style={styles.menuText}>Agenda</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.menu} onPress={this.onTestCalendarsPress.bind(this)}>
+          <Text style={styles.menuText}>TestCalendar</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 
+  onTestCalendarsPress() {
+    this.props.navigator.push({
+      screen: 'TestCalendar',
+      title: 'TCalendars'
+    });
+  }
   onCalendarsPress() {
     this.props.navigator.push({
       screen: 'Calendars',

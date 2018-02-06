@@ -1,6 +1,7 @@
 import {parseDate} from '../interface';
 
 export default function shouldComponentUpdate(nextProps, nextState) {
+  if (nextState.mode !== this.state.mode) return true;
   let shouldUpdate = (nextProps.selected || []).reduce((prev, next, i) => {
     const currentSelected = (this.props.selected || [])[i];
     if (!currentSelected || !next || parseDate(currentSelected).getTime() !== parseDate(next).getTime()) {

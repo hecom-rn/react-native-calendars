@@ -57,6 +57,9 @@ class CalendarHeader extends Component {
     if (nextProps.currentDay !== this.props.currentDay) {
       return true;
     }
+    if (nextProps.mode !== this.props.mode) {
+      return true;
+    }
     return false;
   }
 
@@ -95,11 +98,16 @@ class CalendarHeader extends Component {
     }
     let today;
     if (!this.isSameDay(this.props.currentDay)) {
-      today = <TouchableOpacity onPress={()=>this.props.pressDay(this.today)}>
+      today = <TouchableOpacity
+          style={{position:'absolute', right: 44, alignSelf:'center'}}
+          onPress={()=>this.props.pressDay(this.today)}>
           <Text style={this.style.today}>今日</Text>
       </TouchableOpacity>;
     }
-    let tempSwitch = <TouchableOpacity onPress={this.props.tirgger}><Text>切换</Text></TouchableOpacity>
+    let tempSwitch = <TouchableOpacity
+        onPress={this.props.tirgger}
+        style={{position:'absolute', left: 44, alignSelf:'center', padding:10}}
+    ><Text>{this.props.mode ? '月':'周'}</Text></TouchableOpacity>;
     return (
       <View>
         <View style={this.style.header}>

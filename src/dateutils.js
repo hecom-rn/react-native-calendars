@@ -49,6 +49,23 @@ function weekDayNames(firstDayOfWeek = 0) {
   return weekDaysNames;
 }
 
+function week(xd, firstDayOfWeek) {
+    const fdow = ((7 + firstDayOfWeek) % 7) || 7;
+    const ldow = (fdow + 6) % 7;
+
+    const from = xd.clone();
+    if (from.getDay() !== fdow) {
+        from.addDays(-(from.getDay() + 7 - fdow) % 7);
+    }
+
+    const to = xd.clone();
+    const day = to.getDay();
+    if (day !== ldow) {
+        to.addDays((ldow + 7 - day) % 7);
+    }
+    return fromTo(from, to);
+}
+
 function page(xd, firstDayOfWeek) {
   const days = month(xd);
   let before = [], after = [];
@@ -85,6 +102,7 @@ module.exports = {
   sameMonth,
   sameDate,
   month,
+  week,
   page,
   fromTo,
   isLTE,
