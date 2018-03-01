@@ -18,6 +18,9 @@ export default function getStyle(theme={}) {
       flexDirection: 'row',
       justifyContent: 'space-around'
     },
+    fake: {
+      position: 'absolute'
+    },
     ...(theme[STYLESHEET_ID] || {})
   });
 }

@@ -99,20 +99,15 @@ class CalendarHeader extends Component {
     let today;
     if (!this.isSameDay(this.props.currentDay)) {
       today = <TouchableOpacity
-          style={{position:'absolute', right: 44, alignSelf:'center'}}
+          style={{position:'absolute', right: 16, alignSelf:'center'}}
           onPress={()=>this.props.pressDay(this.today)}>
           <Text style={this.style.today}>今日</Text>
       </TouchableOpacity>;
     }
-    let tempSwitch = <TouchableOpacity
-        onPress={this.props.tirgger}
-        style={{position:'absolute', left: 44, alignSelf:'center', padding:10}}
-    ><Text>{this.props.mode ? '月':'周'}</Text></TouchableOpacity>;
     return (
       <View>
         <View style={this.style.header}>
           {leftArrow}
-          {tempSwitch}
           <View style={{ flexDirection: 'row' }}>
             <Text allowFontScaling={false} style={this.style.monthText}>
               {this.props.month.toString(this.props.monthFormat ? this.props.monthFormat : 'MMMM yyyy')}

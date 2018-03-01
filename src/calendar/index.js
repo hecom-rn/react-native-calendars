@@ -4,6 +4,7 @@ import {
   ViewPropTypes,
   Animated,
   LayoutAnimation,
+  PanResponder,
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -72,6 +73,8 @@ class Calendar extends Component {
     showWeekNumbers: PropTypes.bool,
   };
 
+  thresholdX = 40;
+  thresholdY = 20;
   constructor(props) {
     super(props);
     this.style = styleConstructor(this.props.theme);
@@ -81,6 +84,7 @@ class Calendar extends Component {
     } else {
       currentDay = XDate();
     }
+    this.animating = false;
     this.state = {
       currentDay,
       mode: MODE.MONTH,
@@ -91,6 +95,41 @@ class Calendar extends Component {
     this.pressDay = this.pressDay.bind(this);
     this.shouldComponentUpdate = shouldComponentUpdate;
   }
+
+  componentWillMount() {
+      this._panResponder = PanResponder.create({
+          onMoveShouldSetPanResponder: (e, gs) => this.handleOnMoveShouldSetPanResponder(e, gs),
+          onPanResponderMove: (e, gs) => this.handlePanResponderMove(e, gs),
+          onShouldBlockNativeResponder: _ => false,
+      });
+  }
+
+  handleOnMoveShouldSetPanResponder(e, gs) {
+        const { dx, dy } = gs;
+        return Math.abs(dx) > this.thresholdX || Math.abs(dy) > this.thresholdY;
+    }
+
+  handlePanResponderMove(e, gestureState) {
+        const { dx, dy } = gestureState;
+        const absDx = Math.abs(dx);
+        const absDy = Math.abs(dy);
+
+        // 移动距离大于阈值时，才开始处理滑动逻辑
+        if (!this.animating && (absDx > this.thresholdX || absDy > this.thresholdY)) {
+            this.animating = true;
+            // 竖向滑动
+            if (absDy > absDx) {
+                if (dy > 0 && this.state.mode === MODE.WEEK) {
+                  this.tirgger();
+                } else if (dy < 0 && this.state.mode === MODE.MONTH) {
+                  this.tirgger();
+                }
+            } else {
+              // 横向滑动
+              this.addMonth(dx > 0 ? -1 : 1);
+            }
+        }
+    }
 
   componentWillReceiveProps(nextProps) {
     const current= parseDate(nextProps.current);
@@ -130,7 +169,7 @@ class Calendar extends Component {
       if (!doNotTriggerListeners) {
         const currMont = this.state.currentDay.clone();
         if (this.props.onMonthChange) {
-          this.props.onMonthChange(xdateToData(currMont), this.days);
+          this.props.onMonthChange(xdateToData(currMont));
         }
         if (this.props.onVisibleMonthsChange) {
           this.props.onVisibleMonthsChange([xdateToData(currMont)]);
@@ -156,11 +195,17 @@ class Calendar extends Component {
   }
 
   addMonth(count) {
+    this.changeAnimate(count);
     if (this.state.mode === MODE.MONTH){
       this.updateMonth(this.state.currentDay.clone().addMonths(count, true));
     } else {
       this.updateWeek(this.state.currentDay.clone().addWeeks(count, true))
     }
+  }
+
+  changeAnimate() {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
+    setTimeout(()=>{this.animating = false},500)
   }
 
   renderDay(day, id) {
@@ -264,12 +309,12 @@ class Calendar extends Component {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
       this.setState({mode:MODE.MONTH});
     }
+    setTimeout(()=>{this.animating = false},500)
   };
 
   render() {
     let getDays = this.state.mode === MODE.MONTH ? dateutils.page : dateutils.week;
     const days = getDays(this.state.currentDay, this.props.firstDay);
-    this.days = days;
     const weeks = [];
     while (days.length) {
       weeks.push(this.renderWeek(days.splice(0, 7), weeks.length));
@@ -284,12 +329,14 @@ class Calendar extends Component {
       }
     }
     return (
-      <View style={[this.style.container, this.props.style]}>
+      <View
+        style={[this.style.container, this.props.style]}
+        {...this._panResponder.panHandlers}
+      >
         <CalendarHeader
           mode={this.state.mode}
           theme={this.props.theme}
-          tirgger={this.tirgger.bind(this)}
-          hideArrows={this.props.hideArrows}
+          hideArrows={true}
           month={this.state.currentDay}
           currentDay={this.state.currentDay}
           addMonth={this.addMonth}
@@ -301,7 +348,9 @@ class Calendar extends Component {
           hideDayNames={this.props.hideDayNames}
           weekNumbers={this.props.showWeekNumbers}
         />
-        {weeks}
+        <View>
+            {weeks}
+        </View>
       </View>);
   }
 }
