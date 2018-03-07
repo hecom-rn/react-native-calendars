@@ -5,6 +5,7 @@ import {
   Animated,
   LayoutAnimation,
   PanResponder,
+  InteractionManager,
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -141,6 +142,19 @@ class Calendar extends Component {
     }
   }
 
+  componentWillUpdate(){
+    LayoutAnimation.configureNext({
+      duration: 250,
+      create: {
+        type: LayoutAnimation.Types.easeInEaseOut,
+        property: LayoutAnimation.Properties.opacity,
+      },
+      update: {
+        type: LayoutAnimation.Types.linear
+      }
+    });
+  }
+
   updateMonth(day, doNotTriggerListeners) {
     if (day.toString('yyyy MM') === this.state.currentDay.toString('yyyy MM')) {
       return;
@@ -204,8 +218,9 @@ class Calendar extends Component {
   }
 
   changeAnimate() {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
-    setTimeout(()=>{this.animating = false},500)
+    InteractionManager.runAfterInteractions(()=>{
+        this.animating = false
+    });
   }
 
   renderDay(day, id) {
@@ -292,24 +307,24 @@ class Calendar extends Component {
     }
 
     return (
-      <Animated.View
+      <View
         style={[this.style.week]}
         key={id}
       >
         {week}
-      </Animated.View>
+      </View>
     );
   }
 
   tirgger = () =>{
     if (this.state.mode === MODE.MONTH){
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
       this.setState({mode:MODE.WEEK});
     } else {
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.linear);
       this.setState({mode:MODE.MONTH});
     }
-    setTimeout(()=>{this.animating = false},500)
+    InteractionManager.runAfterInteractions(()=>{
+        this.animating = false
+    });
   };
 
   render() {
