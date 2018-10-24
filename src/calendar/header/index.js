@@ -17,7 +17,7 @@ class CalendarHeader extends Component {
     firstDay: PropTypes.number,
     renderArrow: PropTypes.func,
     hideDayNames: PropTypes.bool,
-    weekNumbers: PropTypes.bool
+   weekNumbers: PropTypes.bool
   };
 
   constructor(props) {
@@ -115,7 +115,7 @@ class CalendarHeader extends Component {
             {indicator}
           </View>
           {today}
-          {*/ {rightArrow} */}
+          {/* {rightArrow} */}
         </View>
         {
           !this.props.hideDayNames &&
