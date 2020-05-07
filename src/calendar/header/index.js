@@ -17,7 +17,9 @@ class CalendarHeader extends Component {
     firstDay: PropTypes.number,
     renderArrow: PropTypes.func,
     hideDayNames: PropTypes.bool,
-   weekNumbers: PropTypes.bool
+    weekNumbers: PropTypes.bool,
+    hiddenHeader: PropTypes.bool,
+    selectedColor: PropTypes.any,
   };
 
   constructor(props) {
@@ -29,6 +31,11 @@ class CalendarHeader extends Component {
   }
 
   isSameDay(selected) {
+    return this.today.getFullYear() === selected.getFullYear() && this.today.getMonth() === selected.getMonth()
+        && this.today.getDate() === selected.getDate();
+  }
+
+  isSameWeek(selected) {
     return this.today.getFullYear() === selected.getFullYear() && this.today.getMonth() === selected.getMonth()
         && this.today.getDate() === selected.getDate();
   }
@@ -106,23 +113,30 @@ class CalendarHeader extends Component {
     }
     return (
       <View>
-        <View style={this.style.header}>
-          {/* {leftArrow} */}
-          <View style={{ flexDirection: 'row' }}>
-            <Text allowFontScaling={false} style={this.style.monthText}>
-              {this.props.month.toString(this.props.monthFormat ? this.props.monthFormat : 'MMMM yyyy')}
-            </Text>
-            {indicator}
+        {!this.props.hiddenHeader && 
+          <View style={this.style.header}>
+            {/* {leftArrow} */}
+            <View style={{ flexDirection: 'row' }}>
+              <Text allowFontScaling={false} style={this.style.monthText}>
+                {this.props.month.toString(this.props.monthFormat ? this.props.monthFormat : 'MMMM yyyy')}
+              </Text>
+              {indicator}
+            </View>
+            {today}
+            {/* {rightArrow} */}
           </View>
-          {today}
-          {/* {rightArrow} */}
-        </View>
+        }
         {
           !this.props.hideDayNames &&
           <View style={this.style.week}>
             {this.props.weekNumbers && <Text allowFontScaling={false} style={this.style.dayHeader}></Text>}
             {weekDaysNames.map((day, idx) => (
-              <Text allowFontScaling={false} key={idx} style={this.style.dayHeader} numberOfLines={1}>{day}</Text>
+              <Text allowFontScaling={false} 
+                key={idx} 
+                style={this.props.currentDay.getDay() === idx && this.props.selectedColor ? [this.style.dayHeader, {color: this.props.selectedColor}]: this.style.dayHeader} 
+                numberOfLines={1}>
+                  {day}
+                </Text>
             ))}
           </View>
         }

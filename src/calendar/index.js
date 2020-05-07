@@ -74,6 +74,8 @@ class Calendar extends Component {
     showWeekNumbers: PropTypes.bool,
     // hidden head titile. Default = false
     hiddenHeader: PropTypes.bool,
+    // selected week color
+    selectedColor: PropTypes.any,
   };
 
   thresholdX = 40;
@@ -350,7 +352,6 @@ class Calendar extends Component {
         style={[this.style.container, this.props.style]}
         {...this._panResponder.panHandlers}
       >
-        {!this.props.hiddenHeader && (
         <CalendarHeader
           mode={this.state.mode}
           theme={this.props.theme}
@@ -365,7 +366,9 @@ class Calendar extends Component {
           monthFormat={this.props.monthFormat}
           hideDayNames={this.props.hideDayNames}
           weekNumbers={this.props.showWeekNumbers}
-        />)}
+          hiddenHeader={this.props.hiddenHeader}
+          selectedColor={this.props.selectedColor}
+        />
         <View>
             {weeks}
         </View>
