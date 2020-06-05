@@ -133,7 +133,7 @@ class CalendarHeader extends Component {
             {weekDaysNames.map((day, idx) => (
               <Text allowFontScaling={false} 
                 key={idx} 
-                style={this.props.currentDay.getDay() === idx && this.props.selectedColor ? [this.style.dayHeader, {color: this.props.selectedColor}]: this.style.dayHeader} 
+                style={(this.isSelectedWeek(idx) && this.props.selectedColor) ? [this.style.dayHeader, {color: this.props.selectedColor}] : this.style.dayHeader} 
                 numberOfLines={1}>
                   {day}
                 </Text>
@@ -142,6 +142,12 @@ class CalendarHeader extends Component {
         }
       </View>
     );
+  }
+
+  isSelectedWeek = (index) => {
+    const g = this.props.currentDay.getDay();
+    const f = this.props.firstDay;
+    return ((index + f) === g || g + (7 - f) === index);
   }
 }
 
