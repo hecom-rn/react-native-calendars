@@ -101,7 +101,7 @@ class Calendar extends Component {
     this.shouldComponentUpdate = shouldComponentUpdate;
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
       this._panResponder = PanResponder.create({
           onMoveShouldSetPanResponder: (e, gs) => this.handleOnMoveShouldSetPanResponder(e, gs),
           onPanResponderMove: (e, gs) => this.handlePanResponderMove(e, gs),
@@ -136,7 +136,7 @@ class Calendar extends Component {
         }
     }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const current= parseDate(nextProps.current);
     if (current && current.toString('yyyy MM') !== this.state.currentDay.toString('yyyy MM')) {
       const currentDay = current.clone();
@@ -146,7 +146,7 @@ class Calendar extends Component {
     }
   }
 
-  componentWillUpdate(){
+  UNSAFE_componentWillUpdate(){
     LayoutAnimation.configureNext({
       duration: 250,
       create: {
