@@ -14,7 +14,7 @@ export default function getStyle(theme={}) {
     },
     week: {
       marginTop: 4,
-      marginBottom: 4,
+      marginBottom: 6,
       flexDirection: 'row',
       justifyContent: 'space-around'
     },
