@@ -117,7 +117,7 @@ class CalendarHeader extends Component {
           <View style={this.style.header}>
             {/* {leftArrow} */}
             <View style={{ flexDirection: 'row' }}>
-              <Text allowFontScaling={false} style={this.style.monthText}>
+              <Text allowFontScaling={undefined} style={this.style.monthText}>
                 {this.props.month.toString(this.props.monthFormat ? this.props.monthFormat : 'MMMM yyyy')}
               </Text>
               {indicator}
@@ -129,9 +129,9 @@ class CalendarHeader extends Component {
         {
           !this.props.hideDayNames &&
           <View style={this.style.week}>
-            {this.props.weekNumbers && <Text allowFontScaling={false} style={this.style.dayHeader}></Text>}
+            {this.props.weekNumbers && <Text allowFontScaling={undefined} style={this.style.dayHeader}></Text>}
             {weekDaysNames.map((day, idx) => (
-              <Text allowFontScaling={false} 
+              <Text allowFontScaling={undefined} 
                 key={idx} 
                 style={(this.isSelectedWeek(idx) && this.props.selectedColor) ? [this.style.dayHeader, {color: this.props.selectedColor}] : this.style.dayHeader} 
                 numberOfLines={1}>
