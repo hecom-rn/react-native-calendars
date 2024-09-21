@@ -19,8 +19,9 @@ import MultiDotDay from './day/multi-dot';
 import CalendarHeader from './header';
 import shouldComponentUpdate from './updater';
 
+const DeprecatedPropTypes = require('deprecated-react-native-prop-types');
 //Fallback when RN version is < 0.44
-const viewPropTypes = ViewPropTypes || View.propTypes;
+const viewPropTypes = DeprecatedPropTypes.ViewPropTypes || View.propTypes;
 const MODE = {WEEK:1,MONTH:0};
 const EmptyArray = [];
 

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, Dimensions, Animated, ViewPropTypes } from "react-native";
+import { Text, View, Dimensions, Animated } from "react-native";
 import PropTypes from "prop-types";
 import XDate from "xdate";
 
@@ -10,11 +10,12 @@ import ReservationsList from "./reservation-list";
 import styleConstructor from "./style";
 import { VelocityTracker } from "../input";
 
+const DeprecatedPropTypes = require('deprecated-react-native-prop-types');
 const HEADER_HEIGHT = 104;
 const KNOB_HEIGHT = 24;
 
 //Fallback when RN version is < 0.44
-const viewPropTypes = ViewPropTypes || View.propTypes;
+const viewPropTypes = DeprecatedPropTypes.ViewPropTypes || View.propTypes;
 
 export default class AgendaView extends Component {
   static propTypes = {
