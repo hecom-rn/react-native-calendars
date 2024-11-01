@@ -86,11 +86,13 @@ class Day extends Component {
       if (next.startingDay) {
         prev.startingDay = {
           color,
+          fillColor: next.fillColor,
         };
       }
       if (next.endingDay) {
         prev.endingDay = {
           color,
+          fillColor: next.fillColor,
         };
       }
       if (!next.startingDay && !next.endingDay) {
@@ -122,7 +124,7 @@ class Day extends Component {
 
     if (this.props.marking) {
       containerStyle.push({
-        borderRadius: 17,
+        borderRadius: 4,
       });
 
       const flags = this.markingStyle;
@@ -144,7 +146,7 @@ class Day extends Component {
           backgroundColor: this.theme.calendarBackground,
         };
         rightFillerStyle = {
-          backgroundColor: flags.startingDay.color,
+          backgroundColor: flags.startingDay.fillColor,
         };
         containerStyle.push({
           backgroundColor: flags.startingDay.color,
@@ -154,7 +156,7 @@ class Day extends Component {
           backgroundColor: this.theme.calendarBackground,
         };
         leftFillerStyle = {
-          backgroundColor: flags.endingDay.color,
+          backgroundColor: flags.endingDay.fillColor,
         };
         containerStyle.push({
           backgroundColor: flags.endingDay.color,
@@ -190,7 +192,7 @@ class Day extends Component {
           {fillers}
           <View style={containerStyle}>
             <Text allowFontScaling={undefined} style={textStyle}>
-              {String(this.props.children)}
+              {this.props.state === 'today' ? '今' : String(this.props.children)}
             </Text>
           </View>
         </View>
