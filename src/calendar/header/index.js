@@ -20,6 +20,8 @@ class CalendarHeader extends Component {
     weekNumbers: PropTypes.bool,
     hiddenHeader: PropTypes.bool,
     selectedColor: PropTypes.any,
+    // 是否只标记今天所在周，默认为false
+    onlyMarkTodayWeek: PropTypes.bool,
   };
 
   constructor(props) {
@@ -113,7 +115,7 @@ class CalendarHeader extends Component {
     }
     return (
       <View>
-        {!this.props.hiddenHeader && 
+        {!this.props.hiddenHeader &&
           <View style={this.style.header}>
             {/* {leftArrow} */}
             <View style={{ flexDirection: 'row' }}>
@@ -131,9 +133,9 @@ class CalendarHeader extends Component {
           <View style={this.style.week}>
             {this.props.weekNumbers && <Text allowFontScaling={undefined} style={this.style.dayHeader}></Text>}
             {weekDaysNames.map((day, idx) => (
-              <Text allowFontScaling={undefined} 
-                key={idx} 
-                style={(this.isSelectedWeek(idx) && this.props.selectedColor) ? [this.style.dayHeader, {color: this.props.selectedColor}] : this.style.dayHeader} 
+              <Text allowFontScaling={undefined}
+                key={idx}
+                style={(this.isSelectedWeek(idx) && this.props.selectedColor) ? [this.style.dayHeader, {color: this.props.selectedColor}] : this.style.dayHeader}
                 numberOfLines={1}>
                   {day}
                 </Text>
@@ -145,9 +147,10 @@ class CalendarHeader extends Component {
   }
 
   isSelectedWeek = (index) => {
-    const g = this.props.currentDay.getDay();
+    const g = this.props.onlyMarkTodayWeek ? this.today.getDay() : this.props.currentDay.getDay();
     const f = this.props.firstDay;
-    return ((index + f) === g || g + (7 - f) === index);
+    const sameMonth = this.props.onlyMarkTodayWeek ? this.today?.toString?.('yyyy-MM') == this.props?.month?.toString?.('yyyy-MM') : true;
+    return ((index + f) === g || g + (7 - f) === index) && sameMonth;
   }
 }
 

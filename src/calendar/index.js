@@ -77,6 +77,8 @@ class Calendar extends Component {
     hiddenHeader: PropTypes.bool,
     // selected week color
     selectedColor: PropTypes.any,
+    // 是否只标记今天所在周，默认为false
+    onlyMarkTodayWeek: PropTypes.bool,
   };
 
   thresholdX = 40;
@@ -358,6 +360,7 @@ class Calendar extends Component {
         <CalendarHeader
           mode={this.state.mode}
           theme={this.props.theme}
+          onlyMarkTodayWeek={this.props.onlyMarkTodayWeek}
           hideArrows={true}
           month={this.state.currentDay}
           currentDay={this.state.currentDay}
