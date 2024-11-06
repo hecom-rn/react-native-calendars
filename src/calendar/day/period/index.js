@@ -190,7 +190,7 @@ class Day extends Component {
       <TouchableWithoutFeedback onPress={this.onDayPress}>
         <View style={this.style.wrapper}>
           {fillers}
-          <View style={containerStyle}>
+          <View style={[containerStyle, { overflow: 'hidden' }]}>
             <Text allowFontScaling={undefined} style={textStyle}>
               {this.props.state === 'today' ? '今' : String(this.props.children)}
             </Text>
