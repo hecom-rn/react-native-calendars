@@ -79,6 +79,8 @@ class Calendar extends Component {
     selectedColor: PropTypes.any,
     // 是否只标记今天所在周，默认为false
     onlyMarkTodayWeek: PropTypes.bool,
+    // 是否禁止滑动切换周/月显示样式
+    disabledSwitchMode: PropTypes.bool,
   };
 
   thresholdX = 40;
@@ -326,10 +328,12 @@ class Calendar extends Component {
   }
 
   tirgger = () =>{
-    if (this.state.mode === MODE.MONTH){
-      this.setState({mode:MODE.WEEK});
-    } else {
-      this.setState({mode:MODE.MONTH});
+    if (!this.props.disabledSwitchMode) {
+      if (this.state.mode === MODE.MONTH){
+        this.setState({mode:MODE.WEEK});
+      } else {
+        this.setState({mode:MODE.MONTH});
+      }
     }
     InteractionManager.runAfterInteractions(()=>{
         this.animating = false
