@@ -1,3 +1,5 @@
+const { TimeUtils } = require('@hecom/aDate');
+
 export class VelocityTracker {
   constructor() {
     this.history = [];
@@ -6,7 +8,7 @@ export class VelocityTracker {
   }
 
   add(position) {
-    const timestamp = new Date().valueOf();
+    const timestamp = TimeUtils.create().valueOf();
     if (this.lastPosition && timestamp > this.lastTimestamp) {
       const diff = position - this.lastPosition;
       if (diff > 0.001 || diff < -0.001) {

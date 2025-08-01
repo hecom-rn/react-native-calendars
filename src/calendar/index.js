@@ -1,15 +1,13 @@
 import React, {Component} from 'react';
 import {
   View,
-  ViewPropTypes,
-  Animated,
   LayoutAnimation,
   PanResponder,
   InteractionManager,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import { TimeUtils } from '@hecom/aDate';
 
-import XDate from 'xdate';
 import dateutils from '../dateutils';
 import {xdateToData, parseDate} from '../interface';
 import styleConstructor from './style';
@@ -92,7 +90,7 @@ class Calendar extends Component {
     if (props.current) {
       currentDay = parseDate(props.current);
     } else {
-      currentDay = XDate();
+      currentDay = TimeUtils.create();
     }
     this.animating = false;
     this.state = {
@@ -143,7 +141,7 @@ class Calendar extends Component {
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     const current= parseDate(nextProps.current);
-    if (current && current.toString('yyyy MM') !== this.state.currentDay.toString('yyyy MM')) {
+    if (current && current.format('YYYY MM') !== this.state.currentDay.format('YYYY MM')) {
       const currentDay = current.clone();
       this.setState({
         currentDay,
@@ -165,7 +163,7 @@ class Calendar extends Component {
   }
 
   updateMonth(day, doNotTriggerListeners) {
-    if (day.toString('yyyy MM') === this.state.currentDay.toString('yyyy MM')) {
+    if (day.format('YYYY MM') === this.state.currentDay.format('YYYY MM')) {
       return;
     }
     const currentDay = day.clone();
@@ -220,9 +218,9 @@ class Calendar extends Component {
   addMonth(count) {
     this.changeAnimate(count);
     if (this.state.mode === MODE.MONTH){
-      this.updateMonth(this.state.currentDay.clone().addMonths(count, true));
+      this.updateMonth(this.state.currentDay.clone().add(count, 'month'));
     } else {
-      this.updateWeek(this.state.currentDay.clone().addWeeks(count, true))
+      this.updateWeek(this.state.currentDay.clone().add(count, 'week'));
     }
   }
 
@@ -242,7 +240,7 @@ class Calendar extends Component {
       state = 'disabled';
     } else if (this.state.mode === MODE.MONTH && !dateutils.sameMonth(day, this.state.currentDay)) {
       state = 'disabled';
-    } else if (dateutils.sameDate(day, XDate())) {
+    } else if (dateutils.sameDate(day, TimeUtils.create())) {
       state = 'today';
     }
     let dayComp;
@@ -292,7 +290,7 @@ class Calendar extends Component {
     if (!this.props.markedDates) {
       return false;
     }
-    const dates = this.props.markedDates[day.toString('yyyy-MM-dd')] || EmptyArray;
+    const dates = this.props.markedDates[day.format('YYYY-MM-DD')] || EmptyArray;
     if (dates.length || dates) {
       return dates;
     } else {
@@ -350,7 +348,7 @@ class Calendar extends Component {
     let indicator;
     const current = parseDate(this.props.current);
     if (current) {
-      const lastMonthOfDay = current.clone().addMonths(1, true).setDate(1).addDays(-1).toString('yyyy-MM-dd');
+      const lastMonthOfDay = current.clone().add(1, 'month').date(1).add(-1, 'day').format('YYYY-MM-DD');
       if (this.props.displayLoadingIndicator &&
           !(this.props.markedDates && this.props.markedDates[lastMonthOfDay])) {
         indicator = true;

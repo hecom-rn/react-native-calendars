@@ -1,25 +1,18 @@
 import React, { Component } from 'react';
 import { ActivityIndicator, Platform, StyleSheet, Text, View , FlatList} from 'react-native';
-import { Calendar, LocaleConfig } from 'react-native-calendars';
-import XDate from 'xdate';
+import { Calendar } from 'react-native-calendars';
+import { TimeUtils } from '@hecom/aDate';
 
 export default class ScheduleCalendar extends Component {
     constructor(props) {
         super(props);
-        LocaleConfig.locales['cn_zh'] = {
-            monthNames: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
-            monthNamesShort: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
-            dayNames: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
-            dayNamesShort: ['日', '一', '二', '三', '四', '五', '六']
-        };
-        LocaleConfig.defaultLocale = 'cn_zh';
-        const today = new XDate();
-        today.setHours(0, 0, 0, 0);
+        TimeUtils.locale('zh-cn');
+        const today = TimeUtils.create().startOfDay();
         this.state = {
             listLoading: false,
             calendarLoading: false,
             selected: today,
-            selectedDateStr: today.toString('yyyy-MM-dd'),
+            selectedDateStr: today.format('YYYY-MM-DD'),
             marked: {},
             data: [],
         };
@@ -46,7 +39,7 @@ export default class ScheduleCalendar extends Component {
                         textDayHeaderFontSize: 12
                     }}
                     onDayPress={this.onDayPress}
-                    monthFormat={'yyyy年MM月'}
+                    monthFormat={'YYYY年MM月'}
                     onMonthChange={this.onMonthChange}
                     hideArrows={false}
                     hideExtraDays={true}
@@ -117,11 +110,10 @@ export default class ScheduleCalendar extends Component {
     };
 
     updateSelected = (timestamp) => {
-        const selected = new XDate(timestamp);
-        selected.setHours(0, 0, 0, 0);
+        const selected = TimeUtils.create(timestamp).startOfDay();
         this.setState({
             selected,
-            selectedDateStr: selected.toString('yyyy-MM-dd')
+            selectedDateStr: selected.format('YYYY-MM-DD')
         });
         return selected;
     }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { ActivityIndicator } from 'react-native';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
-import XDate from 'xdate';
+import { TimeUtils, TimeInstance } from '@hecom/aDate';
 import PropTypes from 'prop-types';
 import styleConstructor from './style';
 import { weekDayNames } from '../../dateutils';
@@ -10,8 +10,8 @@ class CalendarHeader extends Component {
   static propTypes = {
     theme: PropTypes.object,
     hideArrows: PropTypes.bool,
-    month: PropTypes.instanceOf(XDate),
-    currentDay: PropTypes.instanceOf(XDate),
+    month: PropTypes.instanceOf(TimeInstance),
+    currentDay: PropTypes.instanceOf(TimeInstance),
     addMonth: PropTypes.func,
     showIndicator: PropTypes.bool,
     firstDay: PropTypes.number,
@@ -29,16 +29,16 @@ class CalendarHeader extends Component {
     this.style = styleConstructor(props.theme);
     this.addMonth = this.addMonth.bind(this);
     this.substractMonth = this.substractMonth.bind(this);
-    this.today = XDate();
+    this.today = TimeUtils.create();
   }
 
   isSameDay(selected) {
-    return this.today.getFullYear() === selected.getFullYear() && this.today.getMonth() === selected.getMonth()
+    return this.today.getYear() === selected.getYear() && this.today.getMonth() === selected.getMonth()
         && this.today.getDate() === selected.getDate();
   }
 
   isSameWeek(selected) {
-    return this.today.getFullYear() === selected.getFullYear() && this.today.getMonth() === selected.getMonth()
+    return this.today.getYear() === selected.getYear() && this.today.getMonth() === selected.getMonth()
         && this.today.getDate() === selected.getDate();
   }
 
@@ -52,8 +52,8 @@ class CalendarHeader extends Component {
 
   shouldComponentUpdate(nextProps) {
     if (
-      nextProps.month.toString('yyyy MM') !==
-      this.props.month.toString('yyyy MM')
+      nextProps.month.format('YYYY MM') !==
+      this.props.month.format('YYYY MM')
     ) {
       return true;
     }
@@ -120,7 +120,7 @@ class CalendarHeader extends Component {
             {/* {leftArrow} */}
             <View style={{ flexDirection: 'row' }}>
               <Text allowFontScaling={undefined} style={this.style.monthText}>
-                {this.props.month.toString(this.props.monthFormat ? this.props.monthFormat : 'MMMM yyyy')}
+                {this.props.month.format(this.props.monthFormat ? this.props.monthFormat : 'MMMM YYYY')}
               </Text>
               {indicator}
             </View>
@@ -149,7 +149,7 @@ class CalendarHeader extends Component {
   isSelectedWeek = (index) => {
     const g = this.props.onlyMarkTodayWeek ? this.today.getDay() : this.props.currentDay.getDay();
     const f = this.props.firstDay;
-    const sameMonth = this.props.onlyMarkTodayWeek ? this.today?.toString?.('yyyy-MM') == this.props?.month?.toString?.('yyyy-MM') : true;
+    const sameMonth = this.props.onlyMarkTodayWeek ? this.today?.format?.('YYYY-MM') == this.props?.month?.format?.('YYYY-MM') : true;
     return ((index + f) === g || g + (7 - f) === index) && sameMonth;
   }
 }

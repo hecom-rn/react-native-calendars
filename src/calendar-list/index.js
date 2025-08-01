@@ -3,7 +3,7 @@ import {
   FlatList, Platform
 } from 'react-native';
 import PropTypes from 'prop-types';
-import XDate from 'xdate';
+import { TimeUtils } from '@hecom/aDate';
 
 import {xdateToData, parseDate} from '../interface';
 import styleConstructor from './style';
@@ -39,10 +39,10 @@ class CalendarList extends Component {
     this.style = styleConstructor(props.theme);
     const rows = [];
     const texts = [];
-    const date = parseDate(props.current) || XDate();
+    const date = parseDate(props.current) || TimeUtils.create();
     for (let i = 0; i <= this.pastScrollRange + this.futureScrollRange; i++) {
-      const rangeDate = date.clone().addMonths(i - this.pastScrollRange, true);
-      const rangeDateStr = rangeDate.toString('MMM yyyy');
+      const rangeDate = date.clone().add(i - this.pastScrollRange, 'month');
+      const rangeDateStr = rangeDate.format('MMM YYYY');
       texts.push(rangeDateStr);
       /*
        * This selects range around current shown month [-0, +2] or [-1, +1] month for detail calendar rendering.
@@ -62,14 +62,14 @@ class CalendarList extends Component {
       initialized: false
     };
     this.lastScrollPosition = -1000;
-    
+
     this.onViewableItemsChangedBound = this.onViewableItemsChanged.bind(this);
     this.renderCalendarBound = this.renderCalendar.bind(this);
   }
 
   scrollToDay(d, offset, animated) {
     const day = parseDate(d);
-    const diffMonths = Math.round(this.state.openDate.clone().setDate(1).diffMonths(day.clone().setDate(1)));
+    const diffMonths = Math.round(this.state.openDate.clone().date(1).diff(day.clone().date(1), 'month', true));
     let scrollAmount = (calendarHeight * this.pastScrollRange) + (diffMonths * calendarHeight) + (offset || 0);
     let week = 0;
     const days = dateutils.page(day, this.props.firstDay);
@@ -86,17 +86,15 @@ class CalendarList extends Component {
   scrollToMonth(m) {
     const month = parseDate(m);
     const scrollTo = month || this.state.openDate;
-    let diffMonths = Math.round(this.state.openDate.clone().setDate(1).diffMonths(scrollTo.clone().setDate(1)));
+    let diffMonths = Math.round(this.state.openDate.clone().date(1).diff(scrollTo.clone().date(1), 'month', true));
     const scrollAmount = (calendarHeight * this.pastScrollRange) + (diffMonths * calendarHeight);
-    //console.log(month, this.state.openDate);
-    //console.log(scrollAmount, diffMonths);
     this.listView.scrollToOffset({offset: scrollAmount, animated: false});
   }
 
   UNSAFE_componentWillReceiveProps(props) {
     const current = parseDate(this.props.current);
     const nextCurrent = parseDate(props.current);
-    if (nextCurrent && current && nextCurrent.getTime() !== current.getTime()) {
+    if (nextCurrent && current && nextCurrent.valueOf() !== current.valueOf()) {
       this.scrollToMonth(nextCurrent);
     }
 
@@ -104,7 +102,7 @@ class CalendarList extends Component {
     const newrows = [];
     for (let i = 0; i < rowclone.length; i++) {
       let val = this.state.texts[i];
-      if (rowclone[i].getTime) {
+      if (rowclone[i].valueOf) {
         val = rowclone[i].clone();
         val.propbump = rowclone[i].propbump ? rowclone[i].propbump + 1 : 1;
       }
@@ -131,8 +129,8 @@ class CalendarList extends Component {
     for (let i = 0; i < rowclone.length; i++) {
       let val = rowclone[i];
       const rowShouldBeRendered = rowIsCloseToViewable(i, 1);
-      if (rowShouldBeRendered && !rowclone[i].getTime) {
-        val = this.state.openDate.clone().addMonths(i - this.pastScrollRange, true);
+      if (rowShouldBeRendered && !rowclone[i].valueOf) {
+        val = this.state.openDate.clone().add(i - this.pastScrollRange, 'month');
       } else if (!rowShouldBeRendered) {
         val = this.state.texts[i];
       }
@@ -158,7 +156,7 @@ class CalendarList extends Component {
   }
 
   getMonthIndex(month) {
-    let diffMonths = this.state.openDate.diffMonths(month) + this.pastScrollRange;
+    let diffMonths = this.state.openDate.diff(month, 'month') + this.pastScrollRange;
     return diffMonths;
   }
 

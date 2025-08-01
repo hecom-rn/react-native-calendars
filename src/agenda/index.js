@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Text, View, Dimensions, Animated } from "react-native";
 import PropTypes from "prop-types";
-import XDate from "xdate";
+import { TimeUtils } from "@hecom/aDate";
 
 import { parseDate, xdateToData } from "../interface";
 import dateutils from "../dateutils";
@@ -88,8 +88,8 @@ export default class AgendaView extends Component {
       calendarIsReady: false,
       calendarScrollable: false,
       firstResevationLoad: false,
-      selectedDay: parseDate(this.props.selected) || XDate(true),
-      topDay: parseDate(this.props.selected) || XDate(true),
+      selectedDay: parseDate(this.props.selected) || TimeUtils.create(),
+      topDay: parseDate(this.props.selected) || TimeUtils.create(),
     };
     this.currentMonth = this.state.selectedDay.clone();
     this.onLayout = this.onLayout.bind(this);
@@ -313,7 +313,7 @@ export default class AgendaView extends Component {
         }
       });
     }
-    const key = this.state.selectedDay.toString("yyyy-MM-dd");
+    const key = this.state.selectedDay.format('YYYY-MM-DD');
     return {
       ...markings,
       [key]: { ...(markings[key] || {}), ...{ selected: true } },

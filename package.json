@@ -18,7 +18,7 @@
   "license": "MIT",
   "dependencies": {
     "prop-types": "^15.5.10",
-    "xdate": "^0.8.0"
+    "@hecom/aDate": "https://github.com/hecom-rn/aDate.git"
   },
   "devDependencies": {
     "eslint": "^3.19.0",

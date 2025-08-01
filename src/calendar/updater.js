@@ -29,7 +29,7 @@ export default function shouldComponentUpdate(nextProps, nextState) {
     if (prev.update) {
       return prev;
     } else if (prevDate !== nextDate) {
-      if (prevDate && nextDate && prevDate.getTime() === nextDate.getTime()) {
+      if (prevDate && nextDate && prevDate.valueOf() === nextDate.valueOf()) {
         return prev;
       } else {
         return {

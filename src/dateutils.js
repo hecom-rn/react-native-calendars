@@ -1,47 +1,49 @@
-const XDate = require('xdate');
+const { TimeUtils, TimeInstance } = require('@hecom/aDate');
 
 function sameMonth(a, b) {
-  return a instanceof XDate && b instanceof XDate &&
-    a.getFullYear() === b.getFullYear() &&
+  return a instanceof TimeInstance && b instanceof TimeInstance &&
+    a.getYear() === b.getYear() &&
     a.getMonth() === b.getMonth();
 }
 
 function sameDate(a, b) {
-  return a instanceof XDate && b instanceof XDate &&
-    a.getFullYear() === b.getFullYear() &&
+  return a instanceof TimeInstance && b instanceof TimeInstance &&
+    a.getYear() === b.getYear() &&
     a.getMonth() === b.getMonth() &&
     a.getDate() === b.getDate();
 }
 
 function isGTE(a, b) {
-  return b.diffDays(a) > -1;
+  return b.diff(a, 'day') > -1;
 }
 
 function isLTE(a, b) {
-  return a.diffDays(b) > -1;
+  return a.diff(b, 'day') > -1;
 }
 
 function fromTo(a, b) {
   const days = [];
-  let from = +a, to = +b;
-  for (; from <= to; from = new XDate(from, true).addDays(1).getTime()) {
-    days.push(new XDate(from, true));
+  let from = a.valueOf(), to = b.valueOf();
+  for (; from <= to; from = TimeUtils.create(from).add(1, 'day').valueOf()) {
+    days.push(TimeUtils.create(from));
   }
   return days;
 }
 
 function month(xd) {
-  const year = xd.getFullYear(), month = xd.getMonth();
-  const days = new Date(year, month + 1, 0).getDate();
+  const year = xd.getYear();
+  const month = xd.getMonth();
+  const days = TimeUtils.create().year(year).month(month + 1).date(0).getDate();
 
-  const firstDay = new XDate(year, month, 1, 0, 0, 0, true);
-  const lastDay = new XDate(year, month, days, 0, 0, 0, true);
+  const firstDay = TimeUtils.create().year(year).month(month).date(1).startOfDay();
+  const lastDay = TimeUtils.create().year(year).month(month).date(days).startOfDay();
 
   return fromTo(firstDay, lastDay);
 }
 
 function weekDayNames(firstDayOfWeek = 0) {
-  let weekDaysNames = XDate.locales[XDate.defaultLocale].dayNamesShort;
+  const weekdaysMin = TimeUtils.weekdaysMin();
+  let weekDaysNames = weekdaysMin;
   const dayShift = firstDayOfWeek % 7;
   if (dayShift) {
     weekDaysNames = weekDaysNames.slice(dayShift).concat(weekDaysNames.slice(0, dayShift));
@@ -50,20 +52,22 @@ function weekDayNames(firstDayOfWeek = 0) {
 }
 
 function week(xd, firstDayOfWeek) {
-    const fdow = ((7 + firstDayOfWeek) % 7) || 7;
-    const ldow = (fdow + 6) % 7;
+  const fdow = ((7 + firstDayOfWeek) % 7) || 7;
+  const ldow = (fdow + 6) % 7;
 
-    const from = xd.clone();
-    if (from.getDay() !== fdow) {
-        from.addDays(-(from.getDay() + 7 - fdow) % 7);
-    }
+  let from = xd.clone();
+  if (from.getDay() !== fdow) {
+    const daysDiff = -(from.getDay() + 7 - fdow) % 7;
+    from = from.add(daysDiff, 'day');
+  }
 
-    const to = xd.clone();
-    const day = to.getDay();
-    if (day !== ldow) {
-        to.addDays((ldow + 7 - day) % 7);
-    }
-    return fromTo(from, to);
+  let to = xd.clone();
+  const day = to.getDay();
+  if (day !== ldow) {
+    const daysDiff = (ldow + 7 - day) % 7;
+    to = to.add(daysDiff, 'day');
+  }
+  return fromTo(from, to);
 }
 
 function page(xd, firstDayOfWeek) {
@@ -75,15 +79,17 @@ function page(xd, firstDayOfWeek) {
 
   firstDayOfWeek = firstDayOfWeek || 0;
 
-  const from = days[0].clone();
+  let from = days[0].clone();
   if (from.getDay() !== fdow) {
-    from.addDays(-(from.getDay() + 7 - fdow) % 7);
+    const daysDiff = -(from.getDay() + 7 - fdow) % 7;
+    from = from.add(daysDiff, 'day');
   }
 
-  const to = days[days.length - 1].clone();
+  let to = days[days.length - 1].clone();
   const day = to.getDay();
   if (day !== ldow) {
-    to.addDays((ldow + 7 - day) % 7);
+    const daysDiff = (ldow + 7 - day) % 7;
+    to = to.add(daysDiff, 'day');
   }
 
   if (isLTE(from, days[0])) {

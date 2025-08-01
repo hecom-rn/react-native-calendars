@@ -5,6 +5,7 @@ import {
   StyleSheet
 } from 'react-native';
 import {Agenda} from 'react-native-calendars';
+import { TimeUtils } from '@hecom/aDate';
 
 export default class AgendaScreen extends Component {
   constructor(props) {
@@ -33,7 +34,7 @@ export default class AgendaScreen extends Component {
         //    '2017-05-24': {startingDay: true, color: 'gray'},
         //    '2017-05-25': {color: 'gray'},
         //    '2017-05-26': {endingDay: true, color: 'gray'}}}
-         // monthFormat={'yyyy'}
+         // monthFormat={'YYYY'}
          // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
         //renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
       />
@@ -83,7 +84,7 @@ export default class AgendaScreen extends Component {
   }
 
   timeToString(time) {
-    const date = new Date(time);
+    const date = TimeUtils.create(time);
     return date.toISOString().split('T')[0];
   }
 }

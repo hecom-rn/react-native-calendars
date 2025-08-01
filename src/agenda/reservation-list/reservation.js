@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { View, Text } from "react-native";
 import { xdateToData } from "../../interface";
-import XDate from "xdate";
+import { TimeUtils } from "@hecom/aDate";
 import dateutils from "../../dateutils";
 import styleConstructor from "./style";
 
@@ -18,7 +18,7 @@ class ReservationListItem extends Component {
     if (!r1 && !r2) {
       changed = false;
     } else if (r1 && r2) {
-      if (r1.day.getTime() !== r2.day.getTime()) {
+      if (r1.day.valueOf() !== r2.day.valueOf()) {
         changed = true;
       } else if (!r1.reservation && !r2.reservation) {
         changed = false;
@@ -35,10 +35,11 @@ class ReservationListItem extends Component {
     if (this.props.renderDay) {
       return this.props.renderDay(date ? xdateToData(date) : undefined, item);
     }
-    const today = dateutils.sameDate(date, XDate())
+    const today = dateutils.sameDate(date, TimeUtils.create())
       ? this.styles.today
       : undefined;
     if (date) {
+      const dayNamesShort = TimeUtils.weekdaysMin();
       return (
         <View style={this.styles.day}>
           <Text
@@ -51,7 +52,7 @@ class ReservationListItem extends Component {
             allowFontScaling={undefined}
             style={[this.styles.dayText, today]}
           >
-            {XDate.locales[XDate.defaultLocale].dayNamesShort[date.getDay()]}
+            {dayNamesShort[date.getDay()]}
           </Text>
         </View>
       );

@@ -12,12 +12,12 @@ class CalendarListItem extends Component {
   shouldComponentUpdate(nextProps) {
     const r1 = this.props.item;
     const r2 = nextProps.item;
-    return r1.toString('yyyy MM') !== r2.toString('yyyy MM') || !!(r2.propbump && r2.propbump !== r1.propbump);
+    return r1.format('YYYY MM') !== r2.format('YYYY MM') || !!(r2.propbump && r2.propbump !== r1.propbump);
   }
 
   render() {
     const row = this.props.item;
-    if (row.getTime) {
+    if (row.valueOf) {
       return (
         <Calendar
           theme={this.props.theme}
@@ -39,7 +39,7 @@ class CalendarListItem extends Component {
           disabledByDefault={this.props.disabledByDefault}
         />);
     } else {
-      const text = row.toString();
+      const text = row.format();
       return (
         <View style={[{height: this.props.calendarHeight}, this.style.placeholder]}>
           <Text allowFontScaling={undefined} style={this.style.placeholderText}>{text}</Text>
