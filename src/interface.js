@@ -26,7 +26,7 @@ function parseDate(d) {
   } else if (d instanceof TimeInstance) { // TimeInstance
     return TimeUtils.create(d.format('YYYY-MM-DD'));
   } else if (d.valueOf) { // javascript date
-    const dateString = TimeUtils.create(d).format('YYYY-MM-DD');
+    const dateString = TimeUtils.create(d.valueOf()).format('YYYY-MM-DD');
     return TimeUtils.create(dateString);
   } else if (d.year) {
     const dateString = d.year + '-' + padNumber(d.month) + '-' + padNumber(d.day);

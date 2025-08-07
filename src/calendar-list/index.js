@@ -69,7 +69,7 @@ class CalendarList extends Component {
 
   scrollToDay(d, offset, animated) {
     const day = parseDate(d);
-    const diffMonths = Math.round(this.state.openDate.clone().date(1).diff(day.clone().date(1), 'month', true));
+    const diffMonths = Math.round(this.state.openDate.clone().date(1).diff(day.clone().date(1), 'month', true) * -1);
     let scrollAmount = (calendarHeight * this.pastScrollRange) + (diffMonths * calendarHeight) + (offset || 0);
     let week = 0;
     const days = dateutils.page(day, this.props.firstDay);
@@ -86,7 +86,7 @@ class CalendarList extends Component {
   scrollToMonth(m) {
     const month = parseDate(m);
     const scrollTo = month || this.state.openDate;
-    let diffMonths = Math.round(this.state.openDate.clone().date(1).diff(scrollTo.clone().date(1), 'month', true));
+    let diffMonths = Math.round(this.state.openDate.clone().date(1).diff(scrollTo.clone().date(1), 'month', true) * -1);
     const scrollAmount = (calendarHeight * this.pastScrollRange) + (diffMonths * calendarHeight);
     this.listView.scrollToOffset({offset: scrollAmount, animated: false});
   }
@@ -156,7 +156,7 @@ class CalendarList extends Component {
   }
 
   getMonthIndex(month) {
-    let diffMonths = this.state.openDate.diff(month, 'month') + this.pastScrollRange;
+    let diffMonths = (this.state.openDate.diff(month, 'month') * -1) + this.pastScrollRange;
     return diffMonths;
   }
 

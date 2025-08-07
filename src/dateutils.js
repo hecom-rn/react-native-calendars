@@ -14,11 +14,11 @@ function sameDate(a, b) {
 }
 
 function isGTE(a, b) {
-  return b.diff(a, 'day') > -1;
+  return b.diff(a, 'day') < 1;
 }
 
 function isLTE(a, b) {
-  return a.diff(b, 'day') > -1;
+  return a.diff(b, 'day') < 1;
 }
 
 function fromTo(a, b) {
