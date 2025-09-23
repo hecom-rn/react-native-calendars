@@ -8,7 +8,7 @@ export class VelocityTracker {
   }
 
   add(position) {
-    const timestamp = TimeUtils.create().valueOf();
+    const timestamp = TimeUtils.now().valueOf();
     if (this.lastPosition && timestamp > this.lastTimestamp) {
       const diff = position - this.lastPosition;
       if (diff > 0.001 || diff < -0.001) {

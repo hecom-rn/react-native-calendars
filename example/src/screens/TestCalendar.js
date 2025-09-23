@@ -7,7 +7,7 @@ export default class ScheduleCalendar extends Component {
     constructor(props) {
         super(props);
         TimeUtils.locale('zh-cn');
-        const today = TimeUtils.create().startOfDay();
+        const today = TimeUtils.now().startOfDay();
         this.state = {
             listLoading: false,
             calendarLoading: false,

@@ -39,7 +39,7 @@ class CalendarList extends Component {
     this.style = styleConstructor(props.theme);
     const rows = [];
     const texts = [];
-    const date = parseDate(props.current) || TimeUtils.create();
+    const date = parseDate(props.current) || TimeUtils.now();
     for (let i = 0; i <= this.pastScrollRange + this.futureScrollRange; i++) {
       const rangeDate = date.clone().add(i - this.pastScrollRange, 'month');
       const rangeDateStr = rangeDate.format('MMM YYYY');

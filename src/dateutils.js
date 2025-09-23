@@ -1,16 +1,17 @@
 const { TimeUtils, TimeInstance } = require('@hecom/aDate');
+const {zoneConfig} = require('@hecom/aDate/config');
 
-function sameMonth(a, b) {
+function sameMonth(a, b, isDate) {
   return a instanceof TimeInstance && b instanceof TimeInstance &&
-    a.getYear() === b.getYear() &&
-    a.getMonth() === b.getMonth();
+    a.getYear(isDate) === b.getYear(isDate) &&
+    a.getMonth(isDate) === b.getMonth(isDate);
 }
 
-function sameDate(a, b) {
+function sameDate(a, b, isDate) {
   return a instanceof TimeInstance && b instanceof TimeInstance &&
-    a.getYear() === b.getYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate();
+    a.getYear(isDate) === b.getYear(isDate) &&
+    a.getMonth(isDate) === b.getMonth(isDate) &&
+    a.getDate(isDate) === b.getDate(isDate);
 }
 
 function isGTE(a, b) {
@@ -30,13 +31,13 @@ function fromTo(a, b) {
   return days;
 }
 
-function month(xd) {
-  const year = xd.getYear();
-  const month = xd.getMonth();
-  const days = TimeUtils.create().year(year).month(month + 1).date(0).getDate();
+function month(xd, isDate) {
+  const year = xd.getYear(isDate);
+  const month = xd.getMonth(isDate);
+  const days = TimeUtils.now(isDate ? zoneConfig.systemZone : zoneConfig.timezone).year(year).month(month + 1).date(0).getDate(isDate);
 
-  const firstDay = TimeUtils.create().year(year).month(month).date(1).startOfDay();
-  const lastDay = TimeUtils.create().year(year).month(month).date(days).startOfDay();
+  const firstDay = TimeUtils.now(isDate ? zoneConfig.systemZone : zoneConfig.timezone).year(year).month(month).date(1).startOfDay();
+  const lastDay = TimeUtils.now(isDate ? zoneConfig.systemZone : zoneConfig.timezone).year(year).month(month).date(days).startOfDay();
 
   return fromTo(firstDay, lastDay);
 }

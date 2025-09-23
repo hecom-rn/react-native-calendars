@@ -16,6 +16,7 @@ import UnitDay from './day/period';
 import MultiDotDay from './day/multi-dot';
 import CalendarHeader from './header';
 import shouldComponentUpdate from './updater';
+import {zoneConfig} from '@hecom/aDate/config';
 
 const DeprecatedPropTypes = require('deprecated-react-native-prop-types');
 //Fallback when RN version is < 0.44
@@ -79,6 +80,8 @@ class Calendar extends Component {
     onlyMarkTodayWeek: PropTypes.bool,
     // 是否禁止滑动切换周/月显示样式
     disabledSwitchMode: PropTypes.bool,
+    // 是否是日期，如果是日期则按照租户时区进行时间格式化，否则按照个人时区
+    isDate: PropTypes.bool,
   };
 
   thresholdX = 40;
@@ -88,9 +91,9 @@ class Calendar extends Component {
     this.style = styleConstructor(this.props.theme);
     let currentDay;
     if (props.current) {
-      currentDay = parseDate(props.current);
+      currentDay = parseDate(props.current, this.props.isDate);
     } else {
-      currentDay = TimeUtils.create();
+      currentDay = TimeUtils.now();
     }
     this.animating = false;
     this.state = {
@@ -173,10 +176,10 @@ class Calendar extends Component {
       if (!doNotTriggerListeners) {
         const currMont = this.state.currentDay.clone();
         if (this.props.onMonthChange) {
-          this.props.onMonthChange(xdateToData(currMont));
+          this.props.onMonthChange(xdateToData(currMont, this.props.isDate));
         }
         if (this.props.onVisibleMonthsChange) {
-          this.props.onVisibleMonthsChange([xdateToData(currMont)]);
+          this.props.onVisibleMonthsChange([xdateToData(currMont, this.props.isDate)]);
         }
       }
     });
@@ -190,19 +193,19 @@ class Calendar extends Component {
       if (!doNotTriggerListeners) {
         const currMont = this.state.currentDay.clone();
         if (this.props.onMonthChange) {
-          this.props.onMonthChange(xdateToData(currMont));
+          this.props.onMonthChange(xdateToData(currMont, this.props.isDate));
         }
         if (this.props.onVisibleMonthsChange) {
-          this.props.onVisibleMonthsChange([xdateToData(currMont)]);
+          this.props.onVisibleMonthsChange([xdateToData(currMont, this.props.isDate)]);
         }
       }
     });
   }
 
   pressDay(date) {
-    const day = parseDate(date);
-    const minDate = parseDate(this.props.minDate);
-    const maxDate = parseDate(this.props.maxDate);
+    const day = parseDate(date, this.props.isDate);
+    const minDate = parseDate(this.props.minDate, this.props.isDate);
+    const maxDate = parseDate(this.props.maxDate, this.props.isDate);
     this.setState({currentDay:day});
     if (!(minDate && !dateutils.isGTE(day, minDate)) && !(maxDate && !dateutils.isLTE(day, maxDate))) {
       const shouldUpdateMonth = this.props.disableMonthChange === undefined || !this.props.disableMonthChange;
@@ -210,7 +213,7 @@ class Calendar extends Component {
         this.updateMonth(day);
       }
       if (this.props.onDayPress) {
-        this.props.onDayPress(xdateToData(day));
+        this.props.onDayPress(xdateToData(day, this.props.isDate));
       }
     }
   }
@@ -240,7 +243,7 @@ class Calendar extends Component {
       state = 'disabled';
     } else if (this.state.mode === MODE.MONTH && !dateutils.sameMonth(day, this.state.currentDay)) {
       state = 'disabled';
-    } else if (dateutils.sameDate(day, TimeUtils.create())) {
+    } else if (dateutils.sameDate(day, TimeUtils.now(this.props.isDate ? zoneConfig.systemZone : zoneConfig.timezone), this.props.isDate)) {
       state = 'today';
     }
     let dayComp;
@@ -261,7 +264,7 @@ class Calendar extends Component {
           state={state}
           theme={this.props.theme}
           onPress={this.pressDay}
-          date={xdateToData(day)}
+          date={xdateToData(day, this.props.isDate)}
           marking={this.getDateMarking(day)}
         >
           {date}
@@ -376,6 +379,7 @@ class Calendar extends Component {
           weekNumbers={this.props.showWeekNumbers}
           hiddenHeader={this.props.hiddenHeader}
           selectedColor={this.props.selectedColor}
+          isDate={this.props.isDate}
         />
         <View>
             {weeks}

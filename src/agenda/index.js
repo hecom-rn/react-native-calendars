@@ -88,8 +88,8 @@ export default class AgendaView extends Component {
       calendarIsReady: false,
       calendarScrollable: false,
       firstResevationLoad: false,
-      selectedDay: parseDate(this.props.selected) || TimeUtils.create(),
-      topDay: parseDate(this.props.selected) || TimeUtils.create(),
+      selectedDay: parseDate(this.props.selected) || TimeUtils.now(),
+      topDay: parseDate(this.props.selected) || TimeUtils.now(),
     };
     this.currentMonth = this.state.selectedDay.clone();
     this.onLayout = this.onLayout.bind(this);
