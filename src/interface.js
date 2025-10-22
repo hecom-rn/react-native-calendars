@@ -25,7 +25,7 @@ function parseDate(d, isDate) {
   } else if (d.timestamp) { // conventional data timestamp
     return TimeUtils.create(d.timestamp, undefined, isDate ? zoneConfig.systemZone : zoneConfig.timezone);
   } else if (d instanceof TimeInstance) { // TimeInstance
-    return TimeUtils.create(d.format('YYYY-MM-DD', isDate));
+    return TimeUtils.create(d.format('YYYY-MM-DD', isDate), undefined, zoneConfig.timezone);
   } else if (d.valueOf) { // javascript date
     const dateString = TimeUtils.create(d.valueOf()).format('YYYY-MM-DD');
     return TimeUtils.create(dateString);
