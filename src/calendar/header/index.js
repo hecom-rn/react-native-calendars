@@ -112,7 +112,7 @@ class CalendarHeader extends Component {
       today = <TouchableOpacity
           style={{position:'absolute', right: 16, alignSelf:'center'}}
           onPress={()=>this.props.pressDay(this.today)}>
-          <Text style={this.style.today}>今日</Text>
+          <Text style={this.style.today}>{this.props.todayName || '今日'}</Text>
       </TouchableOpacity>;
     }
     return (
