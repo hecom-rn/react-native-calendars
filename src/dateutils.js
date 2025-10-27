@@ -43,13 +43,13 @@ function fromTo(a, b) {
   return days;
 }
 
-function month(xd, isDate) {
-  const year = xd.getYear(isDate);
-  const month = xd.getMonth(isDate);
-  const days = TimeUtils.now(isDate ? zoneConfig.systemZone : zoneConfig.timezone).year(year).month(month + 1).date(0).getDate(isDate);
+function month(xd) {
+  const year = xd.getYear();
+  const month = xd.getMonth();
+  const days = TimeUtils.now().year(year).month(month + 1).date(0).getDate();
 
-  const firstDay = TimeUtils.now(isDate ? zoneConfig.systemZone : zoneConfig.timezone).year(year).month(month).date(1).startOfDay();
-  const lastDay = TimeUtils.now(isDate ? zoneConfig.systemZone : zoneConfig.timezone).year(year).month(month).date(days).startOfDay();
+  const firstDay = TimeUtils.now().year(year).month(month).date(1).startOfDay();
+  const lastDay = TimeUtils.now().year(year).month(month).date(days).startOfDay();
 
   return fromTo(firstDay, lastDay);
 }

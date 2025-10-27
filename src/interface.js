@@ -8,24 +8,24 @@ function padNumber(n) {
   return n;
 }
 
-function xdateToData(date, isDate) {
-  const dateString = date.format('YYYY-MM-DD', isDate);
+function xdateToData(date) {
+  const dateString = date.format('YYYY-MM-DD');
   return {
-    year: date.getYear(isDate),
-    month: date.getMonth(isDate) + 1,
-    day: date.getDate(isDate),
-    timestamp: TimeUtils.create(dateString, undefined, isDate ? zoneConfig.systemZone : zoneConfig.timezone).valueOf(),
+    year: date.getYear(),
+    month: date.getMonth() + 1,
+    day: date.getDate(),
+    timestamp: TimeUtils.create(dateString, undefined, zoneConfig.timezone).valueOf(),
     dateString: dateString
   };
 }
 
-function parseDate(d, isDate) {
+function parseDate(d) {
   if (!d) {
     return;
   } else if (d.timestamp) { // conventional data timestamp
-    return TimeUtils.create(d.timestamp, undefined, isDate ? zoneConfig.systemZone : zoneConfig.timezone);
+    return TimeUtils.create(d.timestamp);
   } else if (d instanceof TimeInstance) { // TimeInstance
-    return TimeUtils.create(d.format('YYYY-MM-DD', isDate), undefined, isDate ? zoneConfig.systemZone : zoneConfig.timezone);
+    return d;
   } else if (d.valueOf) { // javascript date
     const dateString = TimeUtils.create(d.valueOf()).format('YYYY-MM-DD');
     return TimeUtils.create(dateString);
