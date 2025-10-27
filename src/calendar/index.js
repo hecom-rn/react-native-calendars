@@ -213,7 +213,7 @@ class Calendar extends Component {
         this.updateMonth(day);
       }
       if (this.props.onDayPress) {
-        this.props.onDayPress(xdateToData(day));
+        this.props.onDayPress(xdateToData(day, this.props.isDate));
       }
     }
   }

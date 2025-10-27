@@ -8,13 +8,13 @@ function padNumber(n) {
   return n;
 }
 
-function xdateToData(date) {
+function xdateToData(date, isDate) {
   const dateString = date.format('YYYY-MM-DD');
   return {
     year: date.getYear(),
     month: date.getMonth() + 1,
     day: date.getDate(),
-    timestamp: TimeUtils.create(dateString, undefined, zoneConfig.timezone).valueOf(),
+    timestamp: date.valueOf(isDate),
     dateString: dateString
   };
 }
