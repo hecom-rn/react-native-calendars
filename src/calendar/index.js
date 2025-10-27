@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import {
-  View,
-  LayoutAnimation,
-  PanResponder,
-  InteractionManager,
+    View,
+    LayoutAnimation,
+    PanResponder,
+    InteractionManager,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { TimeUtils } from '@hecom/aDate';
@@ -26,61 +26,61 @@ const EmptyArray = [];
 
 class Calendar extends Component {
   static propTypes = {
-    // Specify theme properties to override specific styles for calendar parts. Default = {}
+        // Specify theme properties to override specific styles for calendar parts. Default = {}
     theme: PropTypes.object,
-    // Collection of dates that have to be marked. Default = {}
+        // Collection of dates that have to be marked. Default = {}
     markedDates: PropTypes.object,
 
-    // Specify style for calendar container element. Default = {}
+        // Specify style for calendar container element. Default = {}
     style: viewPropTypes.style,
-    // Initially visible month. Default = Date()
+        // Initially visible month. Default = Date()
     current: PropTypes.any,
-    // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
+        // Minimum date that can be selected, dates before minDate will be grayed out. Default = undefined
     minDate: PropTypes.any,
-    // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
+        // Maximum date that can be selected, dates after maxDate will be grayed out. Default = undefined
     maxDate: PropTypes.any,
 
-    // If firstDay=1 week starts from Monday. Note that dayNames and dayNamesShort should still start from Sunday.
+        // If firstDay=1 week starts from Monday. Note that dayNames and dayNamesShort should still start from Sunday.
     firstDay: PropTypes.number,
 
-    // Date marking style [simple/period]. Default = 'simple'
+        // Date marking style [simple/period]. Default = 'simple'
     markingType: PropTypes.string,
 
-    // Hide month navigation arrows. Default = false
+        // Hide month navigation arrows. Default = false
     hideArrows: PropTypes.bool,
-    // Display loading indicador. Default = false
+        // Display loading indicador. Default = false
     displayLoadingIndicator: PropTypes.bool,
-    // Do not show days of other months in month page. Default = false
+        // Do not show days of other months in month page. Default = false
     hideExtraDays: PropTypes.bool,
 
-    // Handler which gets executed on day press. Default = undefined
+        // Handler which gets executed on day press. Default = undefined
     onDayPress: PropTypes.func,
-    // Handler which gets executed when visible month changes in calendar. Default = undefined
+        // Handler which gets executed when visible month changes in calendar. Default = undefined
     onMonthChange: PropTypes.func,
     onVisibleMonthsChange: PropTypes.func,
-    // Replace default arrows with custom ones (direction can be 'left' or 'right')
+        // Replace default arrows with custom ones (direction can be 'left' or 'right')
     renderArrow: PropTypes.func,
-    // Provide custom day rendering component
+        // Provide custom day rendering component
     dayComponent: PropTypes.any,
-    // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
+        // Month format in calendar title. Formatting values: http://arshaw.com/xdate/#Formatting
     monthFormat: PropTypes.string,
-    // Disables changing month when click on days of other months (when hideExtraDays is false). Default = false
+        // Disables changing month when click on days of other months (when hideExtraDays is false). Default = false
     disableMonthChange: PropTypes.bool,
-    //  Hide day names. Default = false
+        //  Hide day names. Default = false
     hideDayNames: PropTypes.bool,
-    // Disable days by default. Default = false
+        // Disable days by default. Default = false
     disabledByDefault: PropTypes.bool,
-    // Show week numbers. Default = false
+        // Show week numbers. Default = false
     showWeekNumbers: PropTypes.bool,
-    // hidden head titile. Default = false
+        // hidden head titile. Default = false
     hiddenHeader: PropTypes.bool,
-    // selected week color
+        // selected week color
     selectedColor: PropTypes.any,
-    // 是否只标记今天所在周，默认为false
+        // 是否只标记今天所在周，默认为false
     onlyMarkTodayWeek: PropTypes.bool,
-    // 是否禁止滑动切换周/月显示样式
+        // 是否禁止滑动切换周/月显示样式
     disabledSwitchMode: PropTypes.bool,
-    // 是否是日期，如果是日期则按照租户时区进行时间格式化，否则按照个人时区
+        // 是否是日期，如果是日期则按照租户时区进行时间格式化，否则按照个人时区
     isDate: PropTypes.bool,
   };
 
@@ -93,7 +93,7 @@ class Calendar extends Component {
     if (props.current) {
       currentDay = parseDate(props.current, this.props.isDate);
     } else {
-      currentDay = TimeUtils.now();
+      currentDay = TimeUtils.now(this.props.isDate ? zoneConfig.systemZone : zoneConfig.timezone);
     }
     this.animating = false;
     this.state = {
@@ -108,39 +108,39 @@ class Calendar extends Component {
   }
 
   UNSAFE_componentWillMount() {
-      this._panResponder = PanResponder.create({
-          onMoveShouldSetPanResponder: (e, gs) => this.handleOnMoveShouldSetPanResponder(e, gs),
-          onPanResponderMove: (e, gs) => this.handlePanResponderMove(e, gs),
-          onShouldBlockNativeResponder: _ => false,
-      });
+    this._panResponder = PanResponder.create({
+      onMoveShouldSetPanResponder: (e, gs) => this.handleOnMoveShouldSetPanResponder(e, gs),
+      onPanResponderMove: (e, gs) => this.handlePanResponderMove(e, gs),
+      onShouldBlockNativeResponder: _ => false,
+    });
   }
 
   handleOnMoveShouldSetPanResponder(e, gs) {
-        const { dx, dy } = gs;
-        return Math.abs(dx) > this.thresholdX || Math.abs(dy) > this.thresholdY;
-    }
+    const { dx, dy } = gs;
+    return Math.abs(dx) > this.thresholdX || Math.abs(dy) > this.thresholdY;
+  }
 
   handlePanResponderMove(e, gestureState) {
-        const { dx, dy } = gestureState;
-        const absDx = Math.abs(dx);
-        const absDy = Math.abs(dy);
+    const { dx, dy } = gestureState;
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
 
         // 移动距离大于阈值时，才开始处理滑动逻辑
-        if (!this.animating && (absDx > this.thresholdX || absDy > this.thresholdY)) {
-            this.animating = true;
+    if (!this.animating && (absDx > this.thresholdX || absDy > this.thresholdY)) {
+      this.animating = true;
             // 竖向滑动
-            if (absDy > absDx) {
-                if (dy > 0 && this.state.mode === MODE.WEEK) {
-                  this.tirgger();
-                } else if (dy < 0 && this.state.mode === MODE.MONTH) {
-                  this.tirgger();
-                }
-            } else {
-              // 横向滑动
-              this.addMonth(dx > 0 ? -1 : 1);
-            }
+      if (absDy > absDx) {
+        if (dy > 0 && this.state.mode === MODE.WEEK) {
+          this.tirgger();
+        } else if (dy < 0 && this.state.mode === MODE.MONTH) {
+          this.tirgger();
         }
+      } else {
+                // 横向滑动
+        this.addMonth(dx > 0 ? -1 : 1);
+      }
     }
+  }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
     const current= parseDate(nextProps.current);
@@ -229,7 +229,7 @@ class Calendar extends Component {
 
   changeAnimate() {
     InteractionManager.runAfterInteractions(()=>{
-        this.animating = false
+      this.animating = false;
     });
   }
 
@@ -243,7 +243,7 @@ class Calendar extends Component {
       state = 'disabled';
     } else if (this.state.mode === MODE.MONTH && !dateutils.sameMonth(day, this.state.currentDay)) {
       state = 'disabled';
-    } else if (dateutils.sameDate(day, TimeUtils.now(this.props.isDate ? zoneConfig.systemZone : zoneConfig.timezone), this.props.isDate)) {
+    } else if (dateutils.sameDate(day, TimeUtils.now(this.props.isDate ? zoneConfig.systemZone : zoneConfig.timezone))) {
       state = 'today';
     }
     let dayComp;
@@ -252,24 +252,24 @@ class Calendar extends Component {
         dayComp = (<View key={id} style={{flex: 1}}/>);
       } else {
         dayComp = (
-          <View key={id} style={{ width: this.props.emptyDayWidth || 24 }} />
-        );
+                    <View key={id} style={{ width: this.props.emptyDayWidth || 24 }} />
+                );
       }
     } else {
       const DayComp = this.getDayComponent();
       const date = day.getDate();
       dayComp = (
-        <DayComp
-          key={id}
-          state={state}
-          theme={this.props.theme}
-          onPress={this.pressDay}
-          date={xdateToData(day, this.props.isDate)}
-          marking={this.getDateMarking(day)}
-        >
-          {date}
-        </DayComp>
-      );
+                <DayComp
+                    key={id}
+                    state={state}
+                    theme={this.props.theme}
+                    onPress={this.pressDay}
+                    date={xdateToData(day, this.props.isDate)}
+                    marking={this.getDateMarking(day)}
+                >
+                    {date}
+                </DayComp>
+            );
     }
     return dayComp;
   }
@@ -319,12 +319,12 @@ class Calendar extends Component {
     }
 
     return (
-      <View
-        style={[this.style.week]}
-        key={id}
-      >
-        {week}
-      </View>
+            <View
+                style={[this.style.week]}
+                key={id}
+            >
+                {week}
+            </View>
     );
   }
 
@@ -337,7 +337,7 @@ class Calendar extends Component {
       }
     }
     InteractionManager.runAfterInteractions(()=>{
-        this.animating = false
+      this.animating = false;
     });
   };
 
@@ -353,39 +353,38 @@ class Calendar extends Component {
     if (current) {
       const lastMonthOfDay = current.clone().add(1, 'month').date(1).add(-1, 'day').format('YYYY-MM-DD');
       if (this.props.displayLoadingIndicator &&
-          !(this.props.markedDates && this.props.markedDates[lastMonthOfDay])) {
+                !(this.props.markedDates && this.props.markedDates[lastMonthOfDay])) {
         indicator = true;
       }
     }
     return (
-      <View
-        style={[this.style.container, this.props.style]}
-        {...this._panResponder.panHandlers}
-      >
-        <CalendarHeader
-          mode={this.state.mode}
-          theme={this.props.theme}
-          onlyMarkTodayWeek={this.props.onlyMarkTodayWeek}
-          hideArrows={true}
-          month={this.state.currentDay}
-          currentDay={this.state.currentDay}
-          addMonth={this.addMonth}
-          showIndicator={indicator}
-          firstDay={this.props.firstDay}
-          pressDay={this.pressDay}
-          todayName={this.props.todayName}
-          renderArrow={this.props.renderArrow}
-          monthFormat={this.props.monthFormat}
-          hideDayNames={this.props.hideDayNames}
-          weekNumbers={this.props.showWeekNumbers}
-          hiddenHeader={this.props.hiddenHeader}
-          selectedColor={this.props.selectedColor}
-          isDate={this.props.isDate}
-        />
-        <View>
-            {weeks}
-        </View>
-      </View>);
+            <View
+                style={[this.style.container, this.props.style]}
+                {...this._panResponder.panHandlers}
+            >
+                <CalendarHeader
+                    mode={this.state.mode}
+                    theme={this.props.theme}
+                    onlyMarkTodayWeek={this.props.onlyMarkTodayWeek}
+                    hideArrows={true}
+                    month={this.state.currentDay}
+                    currentDay={this.state.currentDay}
+                    addMonth={this.addMonth}
+                    showIndicator={indicator}
+                    firstDay={this.props.firstDay}
+                    pressDay={this.pressDay}
+                    renderArrow={this.props.renderArrow}
+                    monthFormat={this.props.monthFormat}
+                    hideDayNames={this.props.hideDayNames}
+                    weekNumbers={this.props.showWeekNumbers}
+                    hiddenHeader={this.props.hiddenHeader}
+                    selectedColor={this.props.selectedColor}
+                    isDate={this.props.isDate}
+                />
+                <View>
+                    {weeks}
+                </View>
+            </View>);
   }
 }
 

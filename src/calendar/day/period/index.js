@@ -1,17 +1,17 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 //import _ from 'lodash';
-import { TouchableWithoutFeedback, Text, View } from "react-native";
+import { TouchableWithoutFeedback, Text, View } from 'react-native';
 
-import * as defaultStyle from "../../../style";
-import styleConstructor from "./style";
+import * as defaultStyle from '../../../style';
+import styleConstructor from './style';
 
 class Day extends Component {
   static propTypes = {
-    // TODO: selected + disabled props should be removed
-    state: PropTypes.oneOf(["selected", "disabled", "today", ""]),
+        // TODO: selected + disabled props should be removed
+    state: PropTypes.oneOf(['selected', 'disabled', 'today', '']),
 
-    // Specify theme properties to override specific styles for calendar parts. Default = {}
+        // Specify theme properties to override specific styles for calendar parts. Default = {}
     theme: PropTypes.object,
     marking: PropTypes.any,
 
@@ -41,7 +41,7 @@ class Day extends Component {
       return true;
     }
 
-    return ["state", "children"].reduce((prev, next) => {
+    return ['state', 'children'].reduce((prev, next) => {
       if (prev || nextProps[next] !== this.props[next]) {
         return true;
       }
@@ -65,22 +65,22 @@ class Day extends Component {
           prev.containerStyle = this.style.firstQuickAction;
           prev.textStyle = this.style.firstQuickActionText;
           if (next.endSelected && next.first && !next.last) {
-            prev.rightFillerStyle = "#c1e4fe";
+            prev.rightFillerStyle = '#c1e4fe';
           } else if (next.endSelected && next.last && !next.first) {
-            prev.leftFillerStyle = "#c1e4fe";
+            prev.leftFillerStyle = '#c1e4fe';
           }
         } else if (!next.endSelected) {
           prev.containerStyle = this.style.quickAction;
           prev.textStyle = this.style.quickActionText;
         } else if (next.endSelected) {
-          prev.leftFillerStyle = "#c1e4fe";
-          prev.rightFillerStyle = "#c1e4fe";
+          prev.leftFillerStyle = '#c1e4fe';
+          prev.rightFillerStyle = '#c1e4fe';
         }
         return prev;
       }
 
       const color = next.color;
-      if (next.status === "NotAvailable") {
+      if (next.status === 'NotAvailable') {
         prev.textStyle = this.style.naText;
       }
       if (next.startingDay) {
@@ -116,9 +116,9 @@ class Day extends Component {
     let fillerStyle = {};
     let fillers;
 
-    if (this.props.state === "disabled") {
+    if (this.props.state === 'disabled') {
       textStyle.push(this.style.disabledText);
-    } else if (this.props.state === "today") {
+    } else if (this.props.state === 'today') {
       textStyle.push(this.style.todayText);
     }
 
@@ -164,7 +164,7 @@ class Day extends Component {
       } else if (flags.day) {
         leftFillerStyle = { backgroundColor: flags.day.color };
         rightFillerStyle = { backgroundColor: flags.day.color };
-        // #177 bug
+                // #177 bug
         fillerStyle = { backgroundColor: flags.day.color };
       } else if (flags.endingDay && flags.startingDay) {
         rightFillerStyle = {
@@ -179,24 +179,24 @@ class Day extends Component {
       }
 
       fillers = (
-        <View style={[this.style.fillers, fillerStyle]}>
-          <View style={[this.style.leftFiller, leftFillerStyle]} />
-          <View style={[this.style.rightFiller, rightFillerStyle]} />
-        </View>
-      );
+                <View style={[this.style.fillers, fillerStyle]}>
+                    <View style={[this.style.leftFiller, leftFillerStyle]} />
+                    <View style={[this.style.rightFiller, rightFillerStyle]} />
+                </View>
+            );
     }
 
     return (
-      <TouchableWithoutFeedback onPress={this.onDayPress}>
-        <View style={this.style.wrapper}>
-          {fillers}
-          <View style={[containerStyle, { overflow: 'hidden' }]}>
-            <Text allowFontScaling={undefined} style={textStyle}>
-              {this.props.state === 'today' ? '今' : String(this.props.children)}
-            </Text>
-          </View>
-        </View>
-      </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={this.onDayPress}>
+                <View style={this.style.wrapper}>
+                    {fillers}
+                    <View style={[containerStyle, { overflow: 'hidden' }]}>
+                        <Text allowFontScaling={undefined} style={textStyle}>
+                            {this.props.state === 'today' ? '今' : String(this.props.children)}
+                        </Text>
+                    </View>
+                </View>
+            </TouchableWithoutFeedback>
     );
   }
 }

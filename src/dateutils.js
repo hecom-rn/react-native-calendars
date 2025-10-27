@@ -1,17 +1,29 @@
 const { TimeUtils, TimeInstance } = require('@hecom/aDate');
 const {zoneConfig} = require('@hecom/aDate/config');
 
-function sameMonth(a, b, isDate) {
+/**
+ * 是否同一月应该按照个人时区进行判断，所以这里参数没有isDate参数
+ * @param a
+ * @param b
+ * @returns {boolean}
+ */
+function sameMonth(a, b) {
   return a instanceof TimeInstance && b instanceof TimeInstance &&
-    a.getYear(isDate) === b.getYear(isDate) &&
-    a.getMonth(isDate) === b.getMonth(isDate);
+        a.getYear() === b.getYear() &&
+        a.getMonth() === b.getMonth();
 }
 
-function sameDate(a, b, isDate) {
+/**
+ * 是否同一天应该按照个人时区进行判断，所以这里参数没有isDate参数
+ * @param a
+ * @param b
+ * @returns {boolean}
+ */
+function sameDate(a, b) {
   return a instanceof TimeInstance && b instanceof TimeInstance &&
-    a.getYear(isDate) === b.getYear(isDate) &&
-    a.getMonth(isDate) === b.getMonth(isDate) &&
-    a.getDate(isDate) === b.getDate(isDate);
+        a.getYear() === b.getYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate();
 }
 
 function isGTE(a, b) {
