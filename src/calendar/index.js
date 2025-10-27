@@ -91,9 +91,9 @@ class Calendar extends Component {
     this.style = styleConstructor(this.props.theme);
     let currentDay;
     if (props.current) {
-      currentDay = parseDate(props.current, this.props.isDate);
+      currentDay = parseDate(props.current);
     } else {
-      currentDay = TimeUtils.now(this.props.isDate ? zoneConfig.systemZone : zoneConfig.timezone);
+      currentDay = TimeUtils.now();
     }
     this.animating = false;
     this.state = {
@@ -176,10 +176,10 @@ class Calendar extends Component {
       if (!doNotTriggerListeners) {
         const currMont = this.state.currentDay.clone();
         if (this.props.onMonthChange) {
-          this.props.onMonthChange(xdateToData(currMont, this.props.isDate));
+          this.props.onMonthChange(xdateToData(currMont));
         }
         if (this.props.onVisibleMonthsChange) {
-          this.props.onVisibleMonthsChange([xdateToData(currMont, this.props.isDate)]);
+          this.props.onVisibleMonthsChange([xdateToData(currMont)]);
         }
       }
     });
@@ -193,19 +193,19 @@ class Calendar extends Component {
       if (!doNotTriggerListeners) {
         const currMont = this.state.currentDay.clone();
         if (this.props.onMonthChange) {
-          this.props.onMonthChange(xdateToData(currMont, this.props.isDate));
+          this.props.onMonthChange(xdateToData(currMont));
         }
         if (this.props.onVisibleMonthsChange) {
-          this.props.onVisibleMonthsChange([xdateToData(currMont, this.props.isDate)]);
+          this.props.onVisibleMonthsChange([xdateToData(currMont)]);
         }
       }
     });
   }
 
   pressDay(date) {
-    const day = parseDate(date, this.props.isDate);
-    const minDate = parseDate(this.props.minDate, this.props.isDate);
-    const maxDate = parseDate(this.props.maxDate, this.props.isDate);
+    const day = parseDate(date);
+    const minDate = parseDate(this.props.minDate);
+    const maxDate = parseDate(this.props.maxDate);
     this.setState({currentDay:day});
     if (!(minDate && !dateutils.isGTE(day, minDate)) && !(maxDate && !dateutils.isLTE(day, maxDate))) {
       const shouldUpdateMonth = this.props.disableMonthChange === undefined || !this.props.disableMonthChange;
@@ -213,7 +213,7 @@ class Calendar extends Component {
         this.updateMonth(day);
       }
       if (this.props.onDayPress) {
-        this.props.onDayPress(xdateToData(day, this.props.isDate));
+        this.props.onDayPress(xdateToData(day));
       }
     }
   }
@@ -243,7 +243,7 @@ class Calendar extends Component {
       state = 'disabled';
     } else if (this.state.mode === MODE.MONTH && !dateutils.sameMonth(day, this.state.currentDay)) {
       state = 'disabled';
-    } else if (dateutils.sameDate(day, TimeUtils.now(this.props.isDate ? zoneConfig.systemZone : zoneConfig.timezone))) {
+    } else if (dateutils.sameDate(day, TimeUtils.now())) {
       state = 'today';
     }
     let dayComp;
@@ -264,7 +264,7 @@ class Calendar extends Component {
                     state={state}
                     theme={this.props.theme}
                     onPress={this.pressDay}
-                    date={xdateToData(day, this.props.isDate)}
+                    date={xdateToData(day)}
                     marking={this.getDateMarking(day)}
                 >
                     {date}
@@ -379,7 +379,6 @@ class Calendar extends Component {
                     weekNumbers={this.props.showWeekNumbers}
                     hiddenHeader={this.props.hiddenHeader}
                     selectedColor={this.props.selectedColor}
-                    isDate={this.props.isDate}
                 />
                 <View>
                     {weeks}

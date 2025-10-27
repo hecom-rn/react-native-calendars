@@ -23,7 +23,6 @@ class CalendarHeader extends Component {
     selectedColor: PropTypes.any,
     // 是否只标记今天所在周，默认为false
     onlyMarkTodayWeek: PropTypes.bool,
-    isDate: PropTypes.bool,
   };
 
   constructor(props) {
@@ -31,17 +30,17 @@ class CalendarHeader extends Component {
     this.style = styleConstructor(props.theme);
     this.addMonth = this.addMonth.bind(this);
     this.substractMonth = this.substractMonth.bind(this);
-    this.today = TimeUtils.now(props.isDate ? zoneConfig.systemZone : zoneConfig.timezone);
+    this.today = TimeUtils.now();
   }
 
   isSameDay(selected) {
-    return this.today.getYear(this.props.isDate) === selected.getYear(this.props.isDate) && this.today.getMonth(this.props.isDate) === selected.getMonth(this.props.isDate)
-        && this.today.getDate(this.props.isDate) === selected.getDate(this.props.isDate);
+    return this.today.getYear() === selected.getYear() && this.today.getMonth() === selected.getMonth()
+        && this.today.getDate() === selected.getDate();
   }
 
   isSameWeek(selected) {
-    return this.today.getYear(this.props.isDate) === selected.getYear(this.props.isDate) && this.today.getMonth(this.props.isDate) === selected.getMonth(this.props.isDate)
-        && this.today.getDate(this.props.isDate) === selected.getDate(this.props.isDate);
+    return this.today.getYear() === selected.getYear() && this.today.getMonth() === selected.getMonth()
+        && this.today.getDate() === selected.getDate();
   }
 
   addMonth() {
@@ -149,7 +148,7 @@ class CalendarHeader extends Component {
   }
 
   isSelectedWeek = (index) => {
-    const g = this.props.onlyMarkTodayWeek ? this.today.getDay(this.props.isDate) : this.props.currentDay.getDay(this.props.isDate);
+    const g = this.props.onlyMarkTodayWeek ? this.today.getDay() : this.props.currentDay.getDay();
     const f = this.props.firstDay;
     const sameMonth = this.props.onlyMarkTodayWeek ? this.today?.format?.('YYYY-MM') == this.props?.month?.format?.('YYYY-MM') : true;
     return ((index + f) === g || g + (7 - f) === index) && sameMonth;
