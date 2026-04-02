@@ -17,7 +17,9 @@
   "author": "Wix.com",
   "license": "MIT",
   "dependencies": {
-    "prop-types": "^15.5.10",
+    "prop-types": "^15.5.10"
+  },
+  "peerDependencies": {
     "@hecom/aDate": "https://github.com/hecom-rn/aDate.git"
   },
   "devDependencies": {
