@@ -20,7 +20,7 @@ function setFormatDateCallback(fn) {
  */
 function formatDate(date, dateType, fallbackFormat) {
   if (_formatDateCallback) {
-    return _formatDateCallback(date.valueOf(), dateType);
+    return _formatDateCallback(date.valueOf(), dateType, fallbackFormat);
   }
   return date.format(fallbackFormat);
 }
