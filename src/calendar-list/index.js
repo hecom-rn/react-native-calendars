@@ -5,7 +5,7 @@ import {
 import PropTypes from 'prop-types';
 import { TimeUtils } from '@hecom/aDate';
 
-import {xdateToData, parseDate} from '../interface';
+import {xdateToData, parseDate, formatDate} from '../interface';
 import styleConstructor from './style';
 import dateutils from '../dateutils';
 import Calendar from '../calendar';
@@ -42,7 +42,7 @@ class CalendarList extends Component {
     const date = parseDate(props.current) || TimeUtils.now();
     for (let i = 0; i <= this.pastScrollRange + this.futureScrollRange; i++) {
       const rangeDate = date.clone().add(i - this.pastScrollRange, 'month');
-      const rangeDateStr = rangeDate.format('MMM YYYY');
+      const rangeDateStr = formatDate(rangeDate, undefined, 'MMM YYYY');
       texts.push(rangeDateStr);
       /*
        * This selects range around current shown month [-0, +2] or [-1, +1] month for detail calendar rendering.

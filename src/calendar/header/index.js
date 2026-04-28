@@ -5,6 +5,7 @@ import { TimeUtils, TimeInstance } from '@hecom/aDate';
 import PropTypes from 'prop-types';
 import styleConstructor from './style';
 import { weekDayNames } from '../../dateutils';
+import { formatDate } from '../../interface';
 import {zoneConfig} from '@hecom/aDate/config';
 
 class CalendarHeader extends Component {
@@ -121,7 +122,7 @@ class CalendarHeader extends Component {
             {/* {leftArrow} */}
             <View style={{ flexDirection: 'row' }}>
               <Text allowFontScaling={undefined} style={this.style.monthText}>
-                {this.props.month.format(this.props.monthFormat ? this.props.monthFormat : 'MMMM YYYY')}
+                {formatDate(this.props.month, undefined, this.props.monthFormat || 'MMMM YYYY')}
               </Text>
               {indicator}
             </View>

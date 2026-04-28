@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Text, View} from 'react-native';
 import Calendar from '../calendar';
 import styleConstructor from './style';
+import { formatDate } from '../interface';
 
 class CalendarListItem extends Component {
   constructor(props) {
@@ -39,7 +40,7 @@ class CalendarListItem extends Component {
           disabledByDefault={this.props.disabledByDefault}
         />);
     } else {
-      const text = row.format();
+      const text = row.valueOf ? formatDate(row, undefined, 'MMM YYYY') : row;
       return (
         <View style={[{height: this.props.calendarHeight}, this.style.placeholder]}>
           <Text allowFontScaling={undefined} style={this.style.placeholderText}>{text}</Text>

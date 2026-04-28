@@ -1,6 +1,30 @@
 const { TimeUtils, TimeInstance } = require('@hecom/aDate');
 const {zoneConfig} = require('@hecom/aDate/config');
 
+let _formatDateCallback = null;
+
+/**
+ * 设置全局时间格式化回调，用于适配多地区显示。
+ * @param {(timestamp: number, dateType: 'Date' | 'Time' | 'Month' | 'Year' | '') => string} fn
+ */
+function setFormatDateCallback(fn) {
+  _formatDateCallback = fn;
+}
+
+/**
+ * 格式化日期用于显示。有回调时优先使用回调，否则使用 fallbackFormat。
+ * @param {TimeInstance} date
+ * @param {'Date' | 'Time' | 'Month' | 'Year' | ''} dateType
+ * @param {string} fallbackFormat
+ * @returns {string}
+ */
+function formatDate(date, dateType, fallbackFormat) {
+  if (_formatDateCallback) {
+    return _formatDateCallback(date.valueOf(), dateType);
+  }
+  return date.format(fallbackFormat);
+}
+
 function padNumber(n) {
   if (n < 10) {
     return '0' + n;
@@ -39,5 +63,7 @@ function parseDate(d) {
 
 module.exports = {
   xdateToData,
-  parseDate
+  parseDate,
+  setFormatDateCallback,
+  formatDate,
 };
