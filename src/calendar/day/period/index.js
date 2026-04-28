@@ -192,7 +192,7 @@ class Day extends Component {
                     {fillers}
                     <View style={[containerStyle, { overflow: 'hidden' }]}>
                         <Text allowFontScaling={undefined} style={textStyle}>
-                            {this.props.state === 'today' ? '今' : String(this.props.children)}
+                            {String(this.props.children)}
                         </Text>
                     </View>
                 </View>
