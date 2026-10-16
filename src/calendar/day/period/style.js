@@ -12,7 +12,10 @@ export default function styleConstructor(theme={}) {
       flex: 1,
       alignItems: 'center',
       alignSelf: 'stretch',
-      marginLeft: -1
+      marginLeft: -1,
+      // RN View 默认 relative，fillers(absolute) 锚定在本格内；H5(CSS) 默认 static
+      // 会使 fillers 逃逸锚到整行、白色高亮盖住日期文字
+      position: 'relative'
     },
     base: {
       //borderWidth: 1,
