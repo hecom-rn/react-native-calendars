@@ -187,7 +187,13 @@ class Day extends Component {
     }
 
     return (
-            <TouchableWithoutFeedback onPress={this.onDayPress}>
+            <TouchableWithoutFeedback
+                onPress={this.onDayPress}
+                // H5 shim 的 TouchableWithoutFeedback 产生真实 DOM 层，缺 flex:1 时
+                // wrapper 收缩为 base 宽（38px），week 行 space-around 露出白缝，
+                // 选中区间 fillers 无法连成一条（#70824849）；RN 端该组件无 DOM 不受影响
+                style={{ flex: 1, alignSelf: 'stretch' }}
+            >
                 <View style={this.style.wrapper}>
                     {fillers}
                     <View style={[containerStyle, { overflow: 'hidden', position: 'relative' }]}>
